@@ -4,6 +4,8 @@ import NotAd from "./notAdmin"
 const CheckAdmin = (props) => {
 
     const user = useSelector(state => state.account.user)
+    const isLoading = useSelector(state => state.account.isLoading)
+
     const checkAd = user.role
     const routerAd = window.location.pathname.startsWith('/admin')
 

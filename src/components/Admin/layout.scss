@@ -1,0 +1,42 @@
+.main-admin{
+    .sider-mobile{
+        display: none;
+    }
+    .header-admin-mb{
+        display: none;
+    }
+    overflow: hidden;
+    .sider{
+        .title-admin{
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+            height: 10px;
+
+        }
+    }
+    
+
+    @media (min-width: 20rem) and (max-width: 30rem) {
+  .sider{
+    display: none;
+    }
+    .sider-mobile{
+        display: block;
+
+        .title-admin-mobile{
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+            height: 10px;
+        }
+    }
+    .header-admin-lt{
+        display: none;
+    }
+    .header-admin-mb{
+        display: block;
+    }
+    }
+}
+

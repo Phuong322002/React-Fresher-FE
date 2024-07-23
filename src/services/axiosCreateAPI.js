@@ -25,8 +25,13 @@ const fetchAccount = () => {
     return instance.get('/api/v1/auth/account')
 }
 
+const Logout = () => {
+    return instance.post('/api/v1/auth/logout');
+}
+
 export {
     Register,
     Login,
-    fetchAccount
+    fetchAccount,
+    Logout
 }
