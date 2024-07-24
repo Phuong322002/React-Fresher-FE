@@ -56,6 +56,7 @@ instance.interceptors.response.use(function (response) {
       const access_token = await updateToken()
       console.log('>> Check access_token: ', access_token)
       // retry with new token
+      // tránh loop
       error.config.headers[NO_RETRY_HEADER] = 'true' // string val only
 
       if(access_token ) {
@@ -68,9 +69,12 @@ instance.interceptors.response.use(function (response) {
       //   return axios.request(config);
       // });
     }
-
+        console.log('error.response.status: ', error.response.status)
     ////// b3) Trường hợp refresh_token cũng hết hạn
-    if(error.config && error.response && +error.response.status === 400 && error.config.url === '/api/v1/auth/refresh'){
+    if(error.config && error.response && 
+      +error.response.status === 400 && 
+      error.config.url === '/api/v1/auth/refresh'
+    ){
       window.location.href='/login'
   }
   ////////////////////////////////////////////////////////////////

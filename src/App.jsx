@@ -23,6 +23,8 @@ import ProtectedRouter from "./pages/Protected/protectedRouter";
 import LayoutAdmin from './components/Admin/layoutAdmin';
 import AdminPage from "./pages/Admin/admin";
 import './styles/app.scss'
+import UserTableAdmin from "./components/userAdmin/userAdmin";
+
 const Layout = () => {
   return (
     <div className="layout-main" style={{ position: 'relative', border: '1px solid', height: '100vh' }}>
@@ -128,7 +130,7 @@ const App = () => {
         },
         {
           path: 'user',
-          element: <Ex1 />
+          element: <UserTableAdmin />
         },
         {
           path: 'ex2',

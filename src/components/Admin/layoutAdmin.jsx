@@ -3,7 +3,7 @@ import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
 } from '@ant-design/icons';
-import { Button, Layout, Menu } from 'antd';
+import { Button, Layout, Menu, message } from 'antd';
 import './layout.scss'
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { MdDashboard } from "react-icons/md";
@@ -16,6 +16,10 @@ import { Footer } from 'antd/es/layout/layout';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
 import { useSelector } from 'react-redux';
+import { Logout } from '../../services/axiosCreateAPI';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { doLogoutUser } from '../../redux/account/accountSlice';
 
 const { Header, Sider, Content } = Layout;
 
@@ -27,6 +31,20 @@ const LayoutAdmin = () => {
 
     const user = useSelector(state => state.account.user);
 
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const LogoutUser = async () => {
+        const rs = await Logout()
+
+        console.log('>> check rs logout admin: ', rs)
+        if (rs && rs.statusCode === 201) {
+
+            dispatch(doLogoutUser())
+            message.success(rs.data, [2])
+        }
+    }
+
     const items = [
         {
             label: 'Quản lý tài khoản',
@@ -36,7 +54,7 @@ const LayoutAdmin = () => {
             type: 'divider',
         },
         {
-            label: 'Đăng xuất',
+            label: <span onClick={() => { LogoutUser() }}>Đăng xuất</span>,
             key: '1',
         },
     ];
@@ -198,10 +216,17 @@ const LayoutAdmin = () => {
                             </a>
                         </Dropdown>
                     </div>
-
                 </Header>
 
+
                 <Content
+                    style={{
+                        margin: '24px 16px',
+                        padding: 0,
+                        minHeight: 280,
+                        // background: 'RGBA( 220, 220, 220, 0.5 )',
+                        // borderRadius: '5px'
+                    }}
                 >
                     <Outlet />
                 </Content>
