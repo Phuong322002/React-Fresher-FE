@@ -39,7 +39,6 @@ const LayoutAdmin = () => {
 
         console.log('>> check rs logout admin: ', rs)
         if (rs && rs.statusCode === 201) {
-
             dispatch(doLogoutUser())
             message.success(rs.data, [2])
         }

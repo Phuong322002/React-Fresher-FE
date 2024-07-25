@@ -13,7 +13,6 @@ const RegisterComponent = () => {
 
 
     const onFinish = async (values) => {
-        alert('cc')
         setIsRegister(true)
         const rs = await Register(values.fullname, values.email, values.password, values.phone)
         setIsRegister(false)

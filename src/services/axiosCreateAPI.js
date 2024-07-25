@@ -29,9 +29,15 @@ const Logout = () => {
     return instance.post('/api/v1/auth/logout');
 }
 
+const getUserWithPaginate = (query) => {
+
+    return instance.get(`/api/v1/user?${query}`)
+
+}
 export {
     Register,
     Login,
     fetchAccount,
-    Logout
+    Logout,
+    getUserWithPaginate
 }
