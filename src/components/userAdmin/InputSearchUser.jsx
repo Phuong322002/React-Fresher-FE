@@ -2,7 +2,7 @@
 import { Row, Col, Button, Form, Input, Space } from 'antd';
 const InputSearchUser = (props) => {
 
-    const { fetchGetUserWithPaginate } = props
+    const { handleSearch } = props
     const [form] = Form.useForm();
     const onFinish = (values) => {
         let query = "";
@@ -17,7 +17,7 @@ const InputSearchUser = (props) => {
         if (values.phone) {
             query += `&phone=/${values.phone}/i`
         }
-        fetchGetUserWithPaginate(query)
+        handleSearch(query)
     }
 
     const onFinishFailed = (errorInfo) => {
@@ -26,7 +26,7 @@ const InputSearchUser = (props) => {
 
     const handleClear = () => {
         form.resetFields();
-        fetchGetUserWithPaginate()
+        handleSearch('')
     }
 
 

@@ -38,9 +38,10 @@ const LayoutAdmin = () => {
         const rs = await Logout()
 
         console.log('>> check rs logout admin: ', rs)
-        if (rs && rs.statusCode === 201) {
+        if (rs && rs.data) {
             dispatch(doLogoutUser())
-            message.success(rs.data, [2])
+            message.success(rs.data, [2]);
+            navigate('/')
         }
     }
 
