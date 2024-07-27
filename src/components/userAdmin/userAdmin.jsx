@@ -1,4 +1,4 @@
-import { Button, Drawer, Table } from 'antd';
+import { Button, Drawer, Form, Input, Modal, Table } from 'antd';
 import './userTableAdmin.scss';
 import { getUserWithPaginate } from '../../services/axiosCreateAPI';
 import { useEffect, useState } from 'react';
@@ -149,6 +149,10 @@ const UserTableAdmin = () => {
     const [filter, setFilter] = useState('');
     const [sort, setSort] = useState('')
 
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+
     console.log('>> check filter:', filter)
     useEffect(() => {
         fetchGetUserWithPaginate();
@@ -211,8 +215,111 @@ const UserTableAdmin = () => {
     console.log('current: ', current);
     console.log('sort: ', sort);
     console.log("record._id", inforUser)
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+        form.resetFields()
+    };
+
+    const onFinish = (values) => {
+        console.log('Success:', values);
+    };
+    const onFinishFailed = (errorInfo) => {
+        console.log('Failed:', errorInfo);
+    };
+    const [form] = Form.useForm();
+    const headerTable = () => {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div>
+                    Table List User
+                </div>
+                <div style={{ display: 'flex', gap: 10 }} >
+
+                    <Button style={{ background: "green", borderColor: "yellow" }}><CloudDownloadOutlined /> Export</Button>
 
 
+
+                    <Button style={{ background: "orange", borderColor: "yellow" }}><CloudDownloadOutlined /> Import</Button>
+
+                    <>
+                        <Button type="primary" onClick={showModal}>
+                            <PlusOutlined /> Add user
+                        </Button>
+                        <Modal maskClosable={false} title="Basic Modal" open={isModalOpen} onOk={form.submit} onCancel={handleCancel}>
+                            <Form
+                                form={form}
+                                name="basic"
+                                labelCol={{
+                                    span: 24,
+                                }}
+                                style={{
+                                    maxWidth: 600,
+                                }}
+                                initialValues={{
+                                    remember: true,
+                                }}
+                                onFinish={onFinish}
+                                onFinishFailed={onFinishFailed}
+                                autoComplete="off"
+                            >
+                                <Form.Item
+                                    label="User Name"
+                                    name="username"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please input your username!',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Password"
+                                    name="password"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please input your password!',
+                                        },
+                                    ]}
+                                >
+                                    <Input.Password />
+                                </Form.Item>
+
+
+                                <Form.Item
+                                    label="Password"
+                                    name="password"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Please input your password!',
+                                        },
+                                    ]}
+                                >
+                                    <Input.Password />
+                                </Form.Item>
+                            </Form>
+                        </Modal>
+                    </>
+
+
+                    <Button onClick={() => {
+                        setFilter('')
+                        setSort('')
+                    }}><TfiReload /></Button>
+
+
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="main-user-table">
@@ -249,29 +356,12 @@ const UserTableAdmin = () => {
                     gap: 20,
                 }}
             >
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                    <div>
-                        <Button style={{ background: "green", borderColor: "yellow" }}><CloudDownloadOutlined /> Export</Button>
-                    </div>
 
-                    <div>
-                        <Button style={{ background: "orange", borderColor: "yellow" }}><CloudDownloadOutlined /> Import</Button>
-                    </div>
-                    <div>
-                        <Button type="primary" ><PlusOutlined /> Add user</Button>
-                    </div>
-                    <div>
-                        <Button onClick={() => {
-                            setFilter('')
-                            setSort('')
-                        }}><TfiReload /></Button>
-                    </div>
-
-                </div>
 
 
 
                 <Table
+                    title={headerTable}
                     size="large"
                     columns={columns}
                     dataSource={listUserWithPaginate}
@@ -282,6 +372,7 @@ const UserTableAdmin = () => {
                         total: total,
                         pageSizeOptions: [5, 10, 20, 50, 100],
                         showSizeChanger: true,
+                        showTotal: (total, range) => `${range[0]} - ${range[1]} / ${total}`,
                     }}
                     loading={isLoading}
                 // onRow={(record, rowIndex) => {

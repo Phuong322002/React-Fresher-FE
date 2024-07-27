@@ -20,6 +20,10 @@ import { Logout } from '../../services/axiosCreateAPI';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { doLogoutUser } from '../../redux/account/accountSlice';
+import { FcHome } from "react-icons/fc";
+import { LuLogOut } from "react-icons/lu";
+import { UserOutlined } from '@ant-design/icons';
+import { Avatar } from 'antd';
 
 const { Header, Sider, Content } = Layout;
 
@@ -45,10 +49,12 @@ const LayoutAdmin = () => {
         }
     }
 
-    const items = [
+    let items = [
+
         {
-            label: 'Quản lý tài khoản',
+            label: <span onClick={() => navigate('/')}>Trang Chủ</span>,
             key: '0',
+            icon: <FcHome style={{ fontSize: '18px' }} />
         },
         {
             type: 'divider',
@@ -56,8 +62,12 @@ const LayoutAdmin = () => {
         {
             label: <span onClick={() => { LogoutUser() }}>Đăng xuất</span>,
             key: '1',
+            icon: <LuLogOut style={{ fontSize: '18px' }} />
+
         },
+
     ];
+
 
     const itemss = [
         {
@@ -90,11 +100,14 @@ const LayoutAdmin = () => {
         },
     ]
 
+    const imageBackendPng = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`
+
     return (
 
         <Layout className='main-admin' style={{ minHeight: "100vh" }}>
 
             {/* Laptop */}
+
             <Sider className='sider' theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                 <div className='title-admin'>
                     <MdOutlineAdminPanelSettings style={{ marginRight: '6px', fontSize: '20px' }} />
@@ -162,13 +175,23 @@ const LayoutAdmin = () => {
                         width: 'fit-content'
                     }}
                     >
+                        <Avatar
+                            src={imageBackendPng}
+                            style={{
+                                marginLeft: '-45px',
+                                marginTop: '16px',
+                                marginRight: '10px'
+                            }}
+                        />
+
                         <Dropdown
                             menu={{ items }}
                             trigger={['click']}
 
 
                         >
-                            <a onClick={(e) => e.preventDefault()}>
+
+                            <span onClick={(e) => e.preventDefault()} style={{ fontWeight: '600' }}>
                                 <Space>
                                     {isAuthenticated === true &&
                                         user.role === 'ADMIN' &&
@@ -177,7 +200,7 @@ const LayoutAdmin = () => {
                                     }
                                     <DownOutlined />
                                 </Space>
-                            </a>
+                            </span>
                         </Dropdown>
                     </div>
 

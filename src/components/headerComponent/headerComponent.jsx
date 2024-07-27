@@ -16,6 +16,10 @@ import { Logout } from "../../services/axiosCreateAPI";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { doLogoutUser } from "../../redux/account/accountSlice";
+import { FcManager } from "react-icons/fc";
+import { Avatar } from "antd";
+import { UserOutlined } from '@ant-design/icons';
+
 
 const HeaderComponent = () => {
     const [open, setOpen] = useState(false);
@@ -43,6 +47,17 @@ const HeaderComponent = () => {
         console.log('click left button', e);
     };
 
+    const LogoutUser = async () => {
+
+        const rs = await Logout();
+        console.log(rs)
+        if (rs && rs.data) {
+            dispatch(doLogoutUser())
+            message.success(rs.data, [2]);
+            navigate('/')
+        }
+    }
+
     const items = [
         {
             label: 'Quản Lý Tài Khoản',
@@ -55,6 +70,13 @@ const HeaderComponent = () => {
             icon: <IoLogOutOutline style={{ fontSize: '18px' }} />,
         }
     ];
+    if (isAuthenticated === true && user.role === 'ADMIN') {
+        items.unshift({
+            label: <span onClick={() => navigate('/admin')}>Trang quản trị</span>,
+            key: '3',
+            icon: <FcManager style={{ fontSize: '18px' }} />,
+        })
+    }
     const menuProps = {
         items,
     };
@@ -73,15 +95,8 @@ const HeaderComponent = () => {
     //     },
     // ];
 
-    const LogoutUser = async () => {
 
-        const rs = await Logout();
-        if (rs && rs.statusCode === 201) {
-            dispatch(doLogoutUser())
-            message.success(rs.data, [2]);
-            navigate('/')
-        }
-    }
+    const imageBackendPng = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`
 
     return (
         <>
@@ -140,6 +155,7 @@ const HeaderComponent = () => {
                         :
                         <Space wrap>
                             <Dropdown.Button menu={menuProps} onClick={handleButtonClick}>
+                                <Avatar src={imageBackendPng} size={24} icon={<UserOutlined />} />
                                 {user.fullName}
                             </Dropdown.Button>
                         </Space>
