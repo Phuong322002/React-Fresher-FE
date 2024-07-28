@@ -123,7 +123,8 @@ const App = () => {
       errorElement: <NotFoundPage />,
       children: [
         {
-          index: true, element:
+          index: true,
+          element:
             <ProtectedRouter>
               <AdminPage />
             </ProtectedRouter>
