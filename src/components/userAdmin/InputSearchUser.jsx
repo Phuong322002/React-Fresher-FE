@@ -5,6 +5,7 @@ const InputSearchUser = (props) => {
     const { handleSearch } = props
     const [form] = Form.useForm();
     const onFinish = (values) => {
+        console.log('values', values)
         let query = "";
         if (values.fullName) {
             query += `&fullName=/${values.fullName}/i`

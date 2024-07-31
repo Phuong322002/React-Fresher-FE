@@ -10,7 +10,10 @@ import moment from 'moment';
 import { postCreateUser } from '../../services/axiosCreateAPI';
 import { FaSadTear } from "react-icons/fa";
 import ImportFileUser from './importFileComponent';
-
+import ExportFileUser from './exportFileUser';
+import { RiDeleteBin6Fill } from "react-icons/ri";
+import { RiEdit2Fill } from "react-icons/ri";
+import UpdateUser from './updateUser';
 
 
 
@@ -41,6 +44,8 @@ const UserTableAdmin = () => {
         return time
 
     }
+
+
 
     const items = [
         {
@@ -103,7 +108,7 @@ const UserTableAdmin = () => {
             title: 'ID',
             dataIndex: '_id',
             render: (text, record) => {
-                console.log('text, record', text, record)
+                console.log('text, record', record)
                 return (
                     <>
                         <a
@@ -142,8 +147,17 @@ const UserTableAdmin = () => {
         },
         {
             title: 'Action',
-            render: (text, object, index, record) => {
-                return <button>Delete</button>;
+            render: (text, record) => {
+                console.log('c', record)
+                return (
+                    <>
+                        <UpdateUser
+                            record={record}
+                            fetchGetUserWithPaginate={fetchGetUserWithPaginate}
+                        />
+                    </>
+
+                )
             },
         },
     ];
@@ -225,7 +239,6 @@ const UserTableAdmin = () => {
     console.log("record._id", inforUser)
     const showModal = () => {
         setIsModalOpen(true);
-
     };
 
 
@@ -281,12 +294,17 @@ const UserTableAdmin = () => {
                     Table List User
                 </div>
                 <div style={{ display: 'flex', gap: 10 }} >
+                    <>
+                        <ExportFileUser
+                            listUserWithPaginate={listUserWithPaginate}
+                        />
+                    </>
 
-                    <Button style={{ background: "green", borderColor: "yellow" }}><CloudDownloadOutlined /> Export</Button>
 
 
-
-                    <ImportFileUser />
+                    <ImportFileUser
+                        fetchGetUserWithPaginate={fetchGetUserWithPaginate}
+                    />
 
 
                     <>
@@ -421,10 +439,6 @@ const UserTableAdmin = () => {
                     gap: 20,
                 }}
             >
-
-
-
-
                 <Table
                     title={headerTable}
                     size="large"

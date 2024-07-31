@@ -37,11 +37,23 @@ const postCreateUser = (fullName, password, email, phone) => {
     return instance.post('/api/v1/user', {fullName, password, email, phone})
 }
 
+const postCreateListUserBulk = (dataFileUser) => {
+
+    return instance.post('/api/v1/user/bulk-create', [...dataFileUser])
+}
+
+const putUpdateUser = (_id, fullName, phone ) => {
+
+    return instance.put('/api/v1/user', {_id, fullName, phone })
+}
+
 export {
     Register,
     Login,
     fetchAccount,
     Logout,
     getUserWithPaginate,
-    postCreateUser
+    postCreateUser,
+    postCreateListUserBulk,
+    putUpdateUser
 }
