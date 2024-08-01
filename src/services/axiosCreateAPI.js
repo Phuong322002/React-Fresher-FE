@@ -47,6 +47,10 @@ const putUpdateUser = (_id, fullName, phone ) => {
     return instance.put('/api/v1/user', {_id, fullName, phone })
 }
 
+const deleteUser = (_id) => {
+    return instance.delete(`/api/v1/user/${_id}`)
+}
+
 export {
     Register,
     Login,
@@ -55,5 +59,6 @@ export {
     getUserWithPaginate,
     postCreateUser,
     postCreateListUserBulk,
-    putUpdateUser
+    putUpdateUser,
+    deleteUser
 }

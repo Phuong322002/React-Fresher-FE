@@ -31,7 +31,9 @@ const ImportFileUser = (props) => {
         multiple: false,
         maxCount: 1,
         accept: ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
+        //chỉ đọc file ko update ở phía server
         customRequest: dummyRequest,
+        ///
         fileList: fileList,
         onChange(info) {
             const { status } = info.file;

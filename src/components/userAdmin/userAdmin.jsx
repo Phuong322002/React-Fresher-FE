@@ -13,7 +13,7 @@ import ImportFileUser from './importFileComponent';
 import ExportFileUser from './exportFileUser';
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { RiEdit2Fill } from "react-icons/ri";
-import UpdateUser from './updateUser';
+import UpdateUser from './updateAndDeleteUser';
 
 
 

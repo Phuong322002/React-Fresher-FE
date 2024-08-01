@@ -1,15 +1,17 @@
 
-import { Button, Checkbox, Form, Input, message, Modal } from 'antd';
-import { useForm } from 'antd/es/form/Form';
+import { Button, Checkbox, ConfigProvider, Form, Input, message, Modal, notification, Popover } from 'antd';
 import { useEffect, useState } from 'react';
 import { RiDeleteBin6Fill, RiEdit2Fill } from 'react-icons/ri';
 import { putUpdateUser } from '../../services/axiosCreateAPI';
+import { RiErrorWarningFill } from "react-icons/ri";
+import { deleteUser } from '../../services/axiosCreateAPI';
 
 const UpdateUser = (props) => {
 
 
     const { record, fetchGetUserWithPaginate } = props
     const [form] = Form.useForm();
+
 
     useEffect(() => {
         form.setFieldsValue(record)
@@ -41,10 +43,79 @@ const UpdateUser = (props) => {
         form.resetFields();
     };
 
+    const handleDeleteUser = async () => {
+
+        console.log('Check user deleted:', record._id)
+
+        const res = await deleteUser(record._id)
+        if (res && res.data) {
+            message.success("Delete user successfuly ^^", [2]);
+            fetchGetUserWithPaginate()
+        } else {
+            notification.error({
+                message: 'ERROR',
+                description: `${res.message}`
+            })
+            setOpen(false);
+        }
+    }
+
+    const [open, setOpen] = useState(false);
+    const hide = () => {
+        setOpen(false);
+    };
+    const handleOpenChange = () => {
+        setOpen(true);
+    };
+
+    const text = () => {
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                <RiErrorWarningFill style={{ fontSize: '18px', color: '	#ffcc00' }} />
+                <span style={{ fontSize: '17px' }}>
+                    Xác nhận xóa user
+                </span>
+            </div>
+        )
+    }
+
+    const content = (
+        <div>
+            <p style={{ marginBottom: '10px', fontSize: '14px' }}>Bạn có chắc muốn xóa user này ?</p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+                <Button onClick={hide}>Close</Button>
+                <Button type="primary" onClick={() => { handleDeleteUser() }}>Xác nhận</Button>
+            </div>
+        </div >
+    );
+
+    const buttonWidth = 80;
+
     return (
 
         <>
-            <RiDeleteBin6Fill style={{ color: '#ff7f50', fontSize: '15px', marginRight: '15px' }} />
+            <>
+                <ConfigProvider>
+                    <div className="demo">
+                        <div
+                            style={{
+                                float: 'inline-start',
+                            }}
+                        >
+                            <Popover
+                                placement="left"
+                                title={text}
+                                content={content}
+                                trigger="click"
+                                open={open}
+                                onOpenChange={handleOpenChange}
+                            >
+                                <RiDeleteBin6Fill style={{ color: '#ff7f50', fontSize: '15px', marginRight: '15px' }} />
+                            </Popover>
+                        </div>
+                    </div>
+                </ConfigProvider>
+            </>
             <>
                 <RiEdit2Fill onClick={showModalEdit} style={{ color: '#6495ed', fontSize: '15px' }} />
                 <Modal
