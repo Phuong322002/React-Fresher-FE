@@ -6,7 +6,7 @@ import { putUpdateUser } from '../../services/axiosCreateAPI';
 import { RiErrorWarningFill } from "react-icons/ri";
 import { deleteUser } from '../../services/axiosCreateAPI';
 
-const UpdateUser = (props) => {
+const UpdateAndDelete = (props) => {
 
 
     const { record, fetchGetUserWithPaginate } = props
@@ -223,4 +223,4 @@ const UpdateUser = (props) => {
     )
 }
 
-export default UpdateUser
+export default UpdateAndDelete

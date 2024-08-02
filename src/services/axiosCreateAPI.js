@@ -51,6 +51,11 @@ const deleteUser = (_id) => {
     return instance.delete(`/api/v1/user/${_id}`)
 }
 
+const getListBookWithPaginate = (query) => {
+
+    return instance.get(`/api/v1/book?${query}`)
+}
+
 export {
     Register,
     Login,
@@ -60,5 +65,6 @@ export {
     postCreateUser,
     postCreateListUserBulk,
     putUpdateUser,
-    deleteUser
+    deleteUser,
+    getListBookWithPaginate
 }

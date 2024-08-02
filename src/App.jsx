@@ -24,6 +24,7 @@ import LayoutAdmin from './components/Admin/layoutAdmin';
 import AdminPage from "./pages/Admin/admin";
 import './styles/app.scss'
 import UserTableAdmin from "./components/userAdmin/userAdmin";
+import ManageBook from "./components/bookAdmin/bookComponent";
 
 const Layout = () => {
   return (
@@ -134,8 +135,8 @@ const App = () => {
           element: <UserTableAdmin />
         },
         {
-          path: 'ex2',
-          element: <Ex2 />
+          path: 'book',
+          element: <ManageBook />
         }
       ]
     },

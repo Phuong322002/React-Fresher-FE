@@ -91,7 +91,7 @@ const LayoutAdmin = () => {
         {
             key: '3',
             icon: <FaBookAtlas />,
-            label: 'Managee Books',
+            label: <NavLink to='/admin/book'>Managee Books</NavLink>,
         },
         {
             key: '4',
