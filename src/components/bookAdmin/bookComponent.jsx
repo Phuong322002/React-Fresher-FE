@@ -15,7 +15,7 @@ import InputSearchBook from './InputSearchBook';
 import ExportFileBook from './exportFileListBook';
 import { Divider } from 'antd';
 import { Image, Upload } from 'antd';
-import { v4 as uuidv4 } from 'uuid';
+import DetailBook from './detailBook';
 
 const ManageBook = () => {
 
@@ -37,56 +37,6 @@ const ManageBook = () => {
             setInforBook(record)
         }
     }
-
-    useEffect(() => {
-        let arrImgthumbnail = []
-        let arrImgSlider = []
-        console.log('>>> Check sider image book:', inforBook)
-        if (inforBook && inforBook.thumbnail) {
-            const thumbnail = `${import.meta.env.VITE_BACKEND_URL}/images/book/${inforBook.thumbnail}`
-            const objThumbnail = {
-                uid: uuidv4(),
-                name: `${inforBook.thumbnail}`,
-                status: 'done',
-                url: thumbnail,
-            }
-            arrImgthumbnail.push(objThumbnail)
-        }
-
-        if (inforBook && inforBook.slider && inforBook.slider.length > 0) {
-            console.log('inforBook.slider:', inforBook.slider)
-            const arrSliderNew = inforBook.slider.map((sliderImg, index) => {
-                return {
-                    uid: uuidv4(),
-                    name: `${sliderImg}`,
-                    status: 'done',
-                    url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${sliderImg}`,
-                }
-            }
-            )
-            console.log('arrSliderNew:', arrSliderNew)
-            arrImgSlider = [...arrSliderNew]
-        }
-
-        console.log('arrImgthumbnail:', arrImgthumbnail);
-        console.log("arrImgSlider:", arrImgSlider);
-        const arrImgBook = arrImgthumbnail.concat(arrImgSlider);
-        console.log('arrImgBook:', arrImgBook)
-        setFileList(arrImgBook)
-
-    }, [inforBook])
-
-    const convertTimeupdatedAt = () => {
-        const time = moment(inforBook.updatedAt).format("YYYY-MM-DD HH:mm:ss A")
-        return time
-    }
-
-
-    const convertTimecreatedAt = () => {
-        const time = moment(inforBook.createdAt).format("YYYY-MM-DD HH:mm:ss A")
-        return time
-    }
-
     const getBase64 = (file) =>
         new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -100,32 +50,7 @@ const ManageBook = () => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [fileList, setFileList] = useState([])
-    // const [fileList, setFileList] = useState([
-    //     {
-    //         uid: '-1',
-    //         name: 'image.png',
-    //         status: 'done',
-    //         url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    //     },
-    //     {
-    //         uid: '-2',
-    //         name: 'image.png',
-    //         status: 'done',
-    //         url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    //     },
-    //     {
-    //         uid: '-3',
-    //         name: 'image.png',
-    //         status: 'done',
-    //         url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    //     },
-    //     {
-    //         uid: '-4',
-    //         name: 'image.png',
-    //         status: 'done',
-    //         url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    //     },
-    // ]);
+
     const handlePreview = async (file) => {
         console.log('file:', file)
         if (!file.url && !file.preview) {
@@ -135,54 +60,6 @@ const ManageBook = () => {
         setPreviewOpen(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
-    const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
-    const items = [
-        {
-            key: '1',
-            label: 'Id',
-            children: inforBook._id,
-            // span: 1.5,
-        },
-        {
-            key: '2',
-            label: 'Tên sách',
-            // span: 1.5,
-            children: inforBook.mainText,
-        },
-        {
-            key: '3',
-            label: 'Tác giả',
-            children: inforBook.author,
-            // span: 1.5,
-
-        },
-        {
-            key: '4',
-            label: 'Giá tiền',
-            // span: 1.5,
-            children: inforBook.price,
-        },
-        {
-            key: '5',
-            label: 'Thể loại',
-            children: <Badge status="processing" text={inforBook.category} />,
-            span: 3,
-        },
-        {
-            key: '6',
-            label: 'Created At',
-            // span: 1.5,
-            children: convertTimecreatedAt(),
-        },
-
-        {
-            key: '7',
-            label: 'Updated At',
-            // span: 1.5,
-            children: convertTimeupdatedAt(),
-        },
-
-    ];
 
     const columns = [
         {
@@ -197,23 +74,6 @@ const ManageBook = () => {
             title: 'ID',
             dataIndex: '_id',
             render: (text, record) => {
-                // console.log('text, record', record)
-                // let arrImage = record.slider.map((img, index) => {
-                //     console.log('img:', img)
-                //     return img
-                // })
-                // arrImage.unshift(record.thumbnail)
-
-                // // arrImage.push()
-                // // arrImage.unshift(record.thumbnail)
-
-                // const objInforBook = {
-                //     uid: uuidv4(),
-                //     name: 'image.png',
-                //     status: 'done',
-                //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-                // }
-
                 return (
                     <>
                         <a
@@ -247,7 +107,7 @@ const ManageBook = () => {
                 console.log('record:', record)
                 return (
                     <>
-                        {`${record.price}`} vnd
+                        {`${record.price}`} &#8363;
                     </>
                 )
             }
@@ -373,11 +233,6 @@ const ManageBook = () => {
         form.resetFields()
     };
 
-    // const [fullName, setFullName] = useState('');
-    // const [password, setPassword] = useState('');
-    // const [email, setEmail] = useState('');
-    // const [phone, setPhone] = useState('');
-
     const onFinish = async (values) => {
         console.log('Success:', values);
         setIsLoadingModal(true)
@@ -422,13 +277,6 @@ const ManageBook = () => {
                             listBookWithPaginate={listBookWithPaginate}
                         />
                     </>
-
-
-
-                    {/* <ImportFileUser
-                        fetchGetUserWithPaginate={fetchGetUserWithPaginate}
-                    /> */}
-
 
                     <>
                         <Button type="primary" onClick={showModal}>
@@ -585,33 +433,18 @@ const ManageBook = () => {
                 // }}
                 />
             </div>
-            <Drawer size='large' title="Chức năng xem chi tiết" onClose={onClose} open={open}>
-                <Descriptions column={2} size={'small'} title="User Info" bordered items={items} />
-                <Divider style={{ fontWeight: '600' }} orientation="left">Ảnh Books</Divider>
-                <>
-                    <Upload
-                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                        listType="picture-card"
-                        fileList={fileList}
-                        onPreview={handlePreview}
-                        onChange={handleChange}
-                        showUploadList={
-                            { showRemoveIcon: false }
-                        }
-                    >
-
-                    </Upload>
-                    <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancelImg}>
-                        <img
-                            alt="example"
-                            style={{
-                                width: '100%',
-                            }}
-                            src={previewImage}
-                        />
-                    </Modal>
-                </>
-            </Drawer>
+            <DetailBook
+                inforBook={inforBook}
+                setFileList={setFileList}
+                onClose={onClose}
+                fileList={fileList}
+                handlePreview={handlePreview}
+                previewOpen={previewOpen}
+                previewTitle={previewTitle}
+                handleCancelImg={handleCancelImg}
+                previewImage={previewImage}
+                open={open}
+            />
         </div>
     );
 };
