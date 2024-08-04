@@ -56,6 +56,25 @@ const getListBookWithPaginate = (query) => {
     return instance.get(`/api/v1/book?${query}`)
 }
 
+const getCategoryBook = () => {
+
+    return instance.get('/api/v1/database/category');
+}
+
+const postUploadImgBook = (fileImg) => {
+    const formDataBook = new FormData();
+
+    formDataBook.append('fileImg', fileImg);
+    return instance({
+        method: 'post',
+        url: '/api/v1/file/upload',
+        data: formDataBook,
+        headers: {
+            'Content-Type': `multipart/form-data`,
+            'upload-type': 'book'
+        },
+    })
+}
 export {
     Register,
     Login,
@@ -66,5 +85,7 @@ export {
     postCreateListUserBulk,
     putUpdateUser,
     deleteUser,
-    getListBookWithPaginate
+    getListBookWithPaginate,
+    getCategoryBook,
+    postUploadImgBook
 }

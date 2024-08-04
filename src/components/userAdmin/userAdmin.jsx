@@ -246,7 +246,6 @@ const UserTableAdmin = () => {
 
     const handleCancel = () => {
         setIsModalOpen(false);
-
         form.resetFields()
     };
 
