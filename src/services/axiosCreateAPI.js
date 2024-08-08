@@ -75,6 +75,30 @@ const postUploadImgBook = (fileImg) => {
         },
     })
 }
+
+const postCreateABook = (thumbnail, 
+    slider, 
+    mainText, 
+    author, 
+    price, 
+    sold, 
+    quantity, 
+    category) => {
+    
+    return instance.post('/api/v1/book', {thumbnail, slider, mainText, author, price, sold, quantity,
+        category
+    })
+}
+
+const deleteABook = (_id) => {
+    return instance.delete(`/api/v1/book/${_id}`)
+}
+
+const updateABook = (_id, thumbnail, slider, mainText, author, price, sold, quantity, category) => {
+    
+    return instance.put(`/api/v1/book/${_id}`, {thumbnail, slider, mainText, author, price, sold,quantity,category})
+}
+
 export {
     Register,
     Login,
@@ -87,5 +111,8 @@ export {
     deleteUser,
     getListBookWithPaginate,
     getCategoryBook,
-    postUploadImgBook
+    postUploadImgBook,
+    postCreateABook,
+    deleteABook,
+    updateABook
 }

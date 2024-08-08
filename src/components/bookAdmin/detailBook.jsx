@@ -59,19 +59,31 @@ const DetailBook = (props) => {
         },
         {
             key: '5',
+            label: 'Số lượng',
+            // span: 1.5,
+            children: inforBook.quantity,
+        },
+        {
+            key: '6',
+            label: 'Đã bán',
+            // span: 1.5,
+            children: inforBook.sold,
+        },
+        {
+            key: '7',
             label: 'Thể loại',
             children: <Badge status="processing" text={inforBook.category} />,
             span: 3,
         },
         {
-            key: '6',
+            key: '8',
             label: 'Created At',
             // span: 1.5,
             children: convertTimecreatedAt(),
         },
 
         {
-            key: '7',
+            key: '9',
             label: 'Updated At',
             // span: 1.5,
             children: convertTimeupdatedAt(),
@@ -116,7 +128,10 @@ const DetailBook = (props) => {
         setFileList(arrImgBook)
 
     }, [inforBook])
-    const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+    // const handleChange = ({ fileList: newFileList }) => {
+    //     console.log('newFileList:', newFileList)
+    //     return setFileList(newFileList)
+    // };
 
     return (
         <>
@@ -129,12 +144,11 @@ const DetailBook = (props) => {
                         listType="picture-card"
                         fileList={fileList}
                         onPreview={handlePreview}
-                        onChange={handleChange}
+                        // onChange={handleChange}
                         showUploadList={
                             { showRemoveIcon: false }
                         }
                     >
-
                     </Upload>
                     <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancelImg}>
                         <img
@@ -152,3 +166,4 @@ const DetailBook = (props) => {
 }
 
 export default DetailBook
+

@@ -62,6 +62,7 @@ const ImportFileUser = (props) => {
                                 phone: user['Số điện thoại'],
                                 password: "123456"
                             }));
+                            console.log('newArrUser', newArrUser)
                             setImportFileUser(newArrUser);
                         }
                     };

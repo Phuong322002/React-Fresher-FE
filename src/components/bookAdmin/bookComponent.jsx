@@ -18,6 +18,9 @@ import { SettingOutlined } from '@ant-design/icons';
 import { Cascader, InputNumber, Select, Space } from 'antd';
 import { getCategoryBook } from '../../services/axiosCreateAPI';
 import { postUploadImgBook } from '../../services/axiosCreateAPI';
+import { postCreateABook } from '../../services/axiosCreateAPI';
+import UpdateBook from './updateAndDeleteBook';
+import UpdateAndDeleteBook from './updateAndDeleteBook';
 
 const getBase64AddImg = (img, callback) => {
     const reader = new FileReader();
@@ -26,6 +29,7 @@ const getBase64AddImg = (img, callback) => {
 };
 const ManageBook = () => {
     const [previewTitle, setPreviewTitle] = useState('');
+
     const [open, setOpen] = useState(false);
     const showDrawer = () => {
         setOpen(true);
@@ -37,6 +41,7 @@ const ManageBook = () => {
     const [inforBook, setInforBook] = useState({})
 
     const hanldeDetailUser = (record) => {
+        console.log('record:', record)
         showDrawer()
         if (record && record._id) {
             setInforBook(record)
@@ -73,6 +78,8 @@ const ManageBook = () => {
         setPreviewOpen(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
+
+
     const columns = [
         {
             title: 'No',
@@ -139,13 +146,28 @@ const ManageBook = () => {
                 console.log('c', record)
                 return (
                     <>
-                        <UpdateAndDelete
+                        <UpdateAndDeleteBook
+                            listTypeBook={listTypeBook}
+                            dataSlider={dataSlider}
+                            setDataSlider={setDataSlider}
                             record={record}
-                            fetchGetUserWithPaginate={fetchGetListBookWithPaginate}
+                            dataThumbnail={dataThumbnail}
+                            setDataThumbnail={setDataThumbnail}
+                            fetchGetListBookWithPaginate={fetchGetListBookWithPaginate}
                         />
                     </>
                 )
             },
+        },
+        {
+            title: 'Số lượng',
+            dataIndex: 'quantity',
+            hidden: true
+        },
+        {
+            title: 'Đã bán',
+            dataIndex: 'sold',
+            hidden: true
         },
     ];
 
@@ -180,7 +202,7 @@ const ManageBook = () => {
 
         const rs = await getListBookWithPaginate(query);
         setIsLoading(false)
-        console.log('>>> check rs get user with paginate: ', rs);
+        console.log('>>> check rs get book with paginate: ', rs);
         if (rs && rs.data) {
             setListBook(rs.data.result);
             setTotal(rs.data.meta.total);
@@ -387,29 +409,31 @@ const ManageBook = () => {
 
     const onFinish = async (values) => {
         console.log('Success:', values);
-        console.log('data slider:', dataSlider)
+        const { thumbnail, slider, mainText, author, price, sold, quantity, category } = values
+        let thumbnailNew = ''
+        if (dataThumbnail.length > 0) {
+            thumbnailNew = dataThumbnail[0].name;
+        }
 
-        // setIsLoadingModal(true)
-        // const response = await postCreateUser(values.username, values.password, values.email, values.phone)
-        // setIsLoadingModal(false)
-        // console.log('>>> check new user: ', response)
+        const sliderNew = dataSlider.map((nameSlider, index) => {
+            return nameSlider.name
+        })
+        const response = await postCreateABook(thumbnailNew, sliderNew, mainText, author, price, sold, +quantity, category)
+        console.log('response create a book: ', response)
+        if (response && response.data) {
+            message.success("Create a book successfuly!", [2]);
+            fetchGetListBookWithPaginate()
+            setDataThumbnail([])
+            setDataSlider([])
+            form.resetFields()
+            setIsModalOpen(false);
+        } else {
+            notification.error({
+                message: 'Error',
+                description: response.message
+            })
+        }
 
-        // if (response && response.data) {
-        //     message.success('Created new user success');
-        //     fetchGetListBookWithPaginate()
-        //     form.resetFields();
-        //     setIsModalOpen(false);
-        // } else {
-        //     const mes = response.message
-        //     const arrText = mes.split(', ')
-        //     const m1 = arrText[0];
-        //     const m2 = arrText[1];
-        //     notification.error(
-        //         {
-        //             message: <span style={{ fontSize: '13px', fontWeight: '600' }}>{m1} </span>,
-        //             description: <span style={{ fontSize: '18px' }}>{m2} <FaSadTear style={{ color: 'c0c0c0' }} /></span>,
-        //         })
-        // }
     };
 
     const handleDeleteFileImg = (info, type) => {
