@@ -28,7 +28,12 @@ import ManageBook from "./components/bookAdmin/bookComponent";
 
 const Layout = () => {
   return (
-    <div className="layout-main" style={{ position: 'relative', border: '1px solid', height: '100vh' }}>
+    <div
+      className="layout-main"
+      style={{
+        position: 'relative',
+        // height: 'fit-content'
+      }}>
       <div className="header">
         <HeaderComponent />
       </div>
