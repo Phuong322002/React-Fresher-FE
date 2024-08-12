@@ -25,6 +25,7 @@ import AdminPage from "./pages/Admin/admin";
 import './styles/app.scss'
 import UserTableAdmin from "./components/userAdmin/userAdmin";
 import ManageBook from "./components/bookAdmin/bookComponent";
+import DetailBookParams from "./pages/book/detailBook";
 
 const Layout = () => {
   return (
@@ -32,13 +33,15 @@ const Layout = () => {
       className="layout-main"
       style={{
         position: 'relative',
-        // height: 'fit-content'
+        minHeight: '100vh',
+        // height: '100vh',
+        border: '1px solid red'
       }}>
       <div className="header">
         <HeaderComponent />
       </div>
 
-      <div className="content">
+      <div className="content" style={{ border: "1px solid green" }}>
         <Outlet />
       </div>
 
@@ -112,8 +115,8 @@ const App = () => {
           index: true, element: <HomePage />
         },
         {
-          path: 'ex1',
-          element: <Ex1 />
+          path: 'book/:slug',
+          element: <DetailBookParams />
         },
         {
           path: 'ex2',

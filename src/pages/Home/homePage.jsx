@@ -10,10 +10,13 @@ import { Pagination } from 'antd';
 import { getCategoryBook } from '../../services/axiosCreateAPI';
 import { getListBookWithPaginate } from '../../services/axiosCreateAPI';
 import PropagateLoader from "react-spinners/PropagateLoader";
+import { useNavigate } from 'react-router-dom';
 
 
 const HomePage = () => {
     const [form] = Form.useForm();
+    const navigate = useNavigate()
+
     const [listCategory, setListCategory] = useState([])
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
@@ -46,8 +49,12 @@ const HomePage = () => {
 
     //CheckBox
     const handleCheckBox = (changedValues, values) => {
+        if (changedValues?.category && changedValues?.category?.length > 0) {
+            setFilterCategory(`&category=${changedValues.category.join(',')}`)
+        } else {
+            setFilterCategory('')
+        }
         // console.log('changedValues, values: ', changedValues.category.join(','), values)
-        setFilterCategory(`&category=${changedValues.category.join(',')}`)
     }
     console.log('filterCategory', filterCategory)
     console.log('query', query)
@@ -186,6 +193,72 @@ const HomePage = () => {
 
         // setCurrent(page);
     };
+
+
+    //JavaScript: Chuyển tiếng Việt có dấu sang không dấu
+    const removeVietnameseTones = (str) => {
+        str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+        str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+        str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+        str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+        str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+        str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+        str = str.replace(/đ/g, "d");
+        str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+        str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+        str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+        str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+        str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+        str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+        str = str.replace(/Đ/g, "D");
+        // Some system encode vietnamese combining accent as individual utf-8 characters
+        // Một vài bộ encode coi các dấu mũ, dấu chữ như một kí tự riêng biệt nên thêm hai dòng này
+        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // ̀ ́ ̃ ̉ ̣  huyền, sắc, ngã, hỏi, nặng
+        str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // ˆ ̆ ̛  Â, Ê, Ă, Ơ, Ư
+        // Remove extra spaces
+        // Bỏ các khoảng trắng liền nhau
+        str = str.replace(/ + /g, " ");
+        str = str.trim();
+        // Remove punctuations
+        // Bỏ dấu câu, kí tự đặc biệt
+        str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, " ");
+        return str;
+    }
+
+    console.log('removeVietnameseTones', removeVietnameseTones('xin,chào'))
+
+
+    var convertToSlug = function (str) {
+        let slug = removeVietnameseTones(str)
+
+        slug = slug.replace(/^\s+|\s+$/g, ''); // trim
+        slug = slug.toLowerCase();
+
+        // remove accents, swap ñ for n, etc
+        var from = "ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆĞÍÌÎÏİŇÑÓÖÒÔÕØŘŔŠŞŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇğíìîïıňñóöòôõøðřŕšşťúůüùûýÿžþÞĐđßÆa·/_,:;";
+        var to = "AAAAAACCCDEEEEEEEEGIIIIINNOOOOOORRSSTUUUUUYYZaaaaaacccdeeeeeeeegiiiiinnooooooorrsstuuuuuyyzbBDdBAa------";
+        for (var i = 0, l = from.length; i < l; i++) {
+            slug = slug.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+        }
+
+        slug = slug.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+            .replace(/\s+/g, '-') // collapse whitespace and replace by -
+            .replace(/-+/g, '-'); // collapse dashes
+
+        return slug;
+    };
+
+
+    console.log('convertToSlug', convertToSlug('Xin chào Việt Nam'))
+
+    const handleDetailBookParam = (inforBook) => {
+        console.log('in4', inforBook)
+        let mainText = convertToSlug(inforBook.mainText)
+        let id = inforBook._id
+        console.log('slug, id', mainText, id)
+        navigate(`book/${mainText}?id=${id}`)
+    }
+
 
 
     return (
@@ -380,7 +453,7 @@ const HomePage = () => {
                         </div>
 
                         {/* PC */}
-                        <Spin spinning={loading}>
+                        <Spin spinning={loading} tip="Loading...">
 
                             <div className='cards-book'>
                                 {/* {loading === false ?
@@ -393,7 +466,7 @@ const HomePage = () => {
                                     {listBook && listBook.length > 0 && listBook.map((inforBook, index) => {
                                         return (
                                             <>
-                                                <div className='card-book'>
+                                                <div className='card-book' onClick={() => { handleDetailBookParam(inforBook) }}>
                                                     <div className='thumbnail'>
                                                         {/* <img src="http://localhost:8080/images/book/3-931186dd6dcd231da1032c8220332fea.jpg" alt="" /> */}
                                                         <img src={inforBook.thumbnail} alt="" />
