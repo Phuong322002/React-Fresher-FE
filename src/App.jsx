@@ -34,21 +34,30 @@ const Layout = () => {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        // height: '100vh',
-        border: '1px solid red'
+        // minHeight: 'fit-content',
+        // border: '1px solid red',
+        overflow: 'hidden'
+
       }}>
       <div className="header">
         <HeaderComponent />
       </div>
 
-      <div className="content" style={{ border: "1px solid green" }}>
+      <div className="content"
+        style={{
+          // border: "1px solid green",
+          backgroundColor: "RGBA( 169, 169, 169, 0.2)",
+          height: 'fit-content',
+
+        }}
+      >
         <Outlet />
       </div>
 
       <div className="footer">
         <FooterComponent />
       </div>
-    </div>
+    </div >
   )
 }
 

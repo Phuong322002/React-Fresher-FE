@@ -5,7 +5,8 @@ import ImageGallery from "react-image-gallery";
 import { Col, Image, InputNumber, Modal, Row } from "antd";
 import './detailBook.scss'
 import { Rate } from 'antd';
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { BsCartPlus } from "react-icons/bs";
 
 
 const DetailBookParams = (props) => {
@@ -18,6 +19,8 @@ const DetailBookParams = (props) => {
     console.log('Location, param:', location, param, id)
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentIndexImg, setCurrentIndexImg] = useState(0)
+    const [borderImg, setBoderImg] = useState(0)
 
     // image detail
     const images = [
@@ -39,6 +42,7 @@ const DetailBookParams = (props) => {
     //Model show image
     const showModal = () => {
         setIsModalOpen(true);
+        refGallery.current.slideToIndex(borderImg)
     };
     const handleOk = () => {
         setIsModalOpen(false);
@@ -47,79 +51,145 @@ const DetailBookParams = (props) => {
         setIsModalOpen(false);
     };
 
-    const renderItem = (item) => {
-        return (
-            <div className="image-gallery-image">
-                <img src={item.original} alt={item.description} />
-                {
-                    item.description && (
-                        <span className="image-gallery-description">
-                            {item.description}
-                        </span>
-                    )
-                }
-            </div>
-        )
-    };
-
-    const renderThumbInner = (item) => {
-        return (
-            <>
-                <div className="custom-thumb">
-                    <img src={item.thumbnail} alt={item.description} />
-                    <div className="thumb-text">{item.description}</div>
-                </div>
-            </>
-        );
-    };
-
-
     console.log('refGallery', refGallery.current)
+
+    const displayImgCurrent = (index) => {
+        console.log('test', index)
+        setCurrentIndexImg(index)
+        setBoderImg(index)
+    }
+
+    const handleClickThumbnail = (index) => {
+        setCurrentIndexImg(index)
+        refGallery?.current?.slideToIndex(index);
+
+    }
+
+    const test = (index) => {
+        let i = refGallery.current.getCurrentIndex()
+        console.log('iii', i)
+        setCurrentIndexImg(i)
+    }
+
+    // useEffect(() => {
+    //     r.current = borderImg
+    // }, [borderImg])
+
+
+    console.log('borderImg', borderImg)
+
+
     return (
-
-        <div className="main-detail">
-            <Row gutter={24}>
-                <Col span={12}>
-                    <div className="img-detail">
-                        <ImageGallery
-                            items={images}
-                            showBullets={false}
-                            showPlayButton={false}
-                            showFullscreenButton={false}
-                            showNav={false}
-                            preventDefaultTouchmoveEvent={true}
-                            slideOnThumbnailOver={true}
-                            onClick={showModal}
-                            renderLeftNav={() => <></>} //left arrow === <> </>
-                            renderRightNav={() => <></>}
-
-                        />
-                        {/* <Modal width={900} title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <div style={{
+            height: 'calc(100vh - 100px)',
+            padding: '10px',
+            overflow: 'hidden'
+        }}>
+            <div className="main-detail">
+                <Row gutter={24}>
+                    {/* Col PC */}
+                    <Col md={12} xs={0} sm={0} span={12}>
+                        <div className="img-detail">
                             <ImageGallery
-                                ref={refGallery}
                                 items={images}
                                 showBullets={false}
                                 showPlayButton={false}
                                 showFullscreenButton={false}
-                                // showNav={false}
+                                showNav={false}
                                 preventDefaultTouchmoveEvent={true}
-                                // slideOnThumbnailOver={true}
+                                slideOnThumbnailOver={true}
                                 onClick={showModal}
-                                thumbnailLoading='eager'
-                                thumbnailPosition='right'
-                            // renderItem={renderItem} // Sử dụng renderItem trong modal
-                            // renderThumbInner={renderThumbInner} // Sử dụng renderThumbInner để tùy chỉnh thumbnails
-
+                                renderLeftNav={() => <></>} //left arrow === <> </>
+                                renderRightNav={() => <></>}
+                                showIndex={true}
+                                onSlide={(index) => { displayImgCurrent(index) }}
+                            // startIndex={0}
                             />
-                        </Modal> */}
-                        <Modal
+
+                            <Modal
+                                onOk={handleOk}
+                                width={'60vw'}
+                                open={isModalOpen}
+                                onCancel={handleCancel}
+                                footer={null} //hide footer
+                                closable={false} //hide close button
+                                className="modal-gallery"
+                            // maskClosable={false}
+                            >
+                                <Row gutter={24}>
+                                    <Col span={16}>
+                                        <ImageGallery
+                                            ref={refGallery}
+                                            items={images}
+                                            showPlayButton={false} //hide play button
+                                            showFullscreenButton={false} //hide fullscreen button
+                                            // startIndex={currentIndex} // start at current index
+                                            showThumbnails={false} //hide thumbnail
+                                            // onSlide={(i) => setActiveIndex(i)}
+                                            slideDuration={0} //duration between slices
+                                            showIndex={true}
+                                            startIndex={borderImg}
+                                            onSlide={(index) => { test(index) }}
+
+                                        />
+                                    </Col>
+                                    <Col span={8}>
+                                        <div style={{ padding: "5px 0 20px 0" }}>{'dsfds'}</div>
+                                        <div>
+                                            <Row gutter={[20, 20]}>
+                                                {
+                                                    images?.map((item, i) => {
+                                                        return (
+                                                            <Col key={`image-${i}`}>
+                                                                <Image
+                                                                    style={currentIndexImg === i ? { border: '4px solid red' } : {}}
+                                                                    wrapperClassName={"img-normal"}
+                                                                    width={100}
+                                                                    height={100}
+                                                                    src={item.original}
+                                                                    preview={false}
+                                                                    onClick={() => {
+                                                                        handleClickThumbnail(i)
+                                                                    }}
+                                                                />
+                                                                {/* <div className={activeIndex === i ? "active" : ""}></div> */}
+                                                            </Col>
+                                                        )
+                                                    })
+                                                }
+                                            </Row>
+                                        </div>
+                                    </Col>
+                                </Row>
+                            </Modal>
+
+                        </div>
+                    </Col>
+
+                    {/* Col mobile */}
+                    <Col md={0} xs={24} sm={24} span={12}>
+                        <div className="img-detail-mobile">
+                            <ImageGallery
+                                items={images}
+                                showBullets={false}
+                                showPlayButton={false}
+                                showFullscreenButton={false}
+                                showNav={false}
+                                preventDefaultTouchmoveEvent={true}
+                                slideOnThumbnailOver={true}
+                                onClick={false}
+                                renderLeftNav={() => <></>} //left arrow === <> </>
+                                renderRightNav={() => <></>}
+                                showThumbnails={false}
+                            />
+                            {/* <Modal
                             onOk={handleOk}
                             width={'60vw'}
                             open={isModalOpen}
                             onCancel={handleCancel}
                             footer={null} //hide footer
                             closable={false} //hide close button
-                        // className="modal-gallery"
+                            className="modal-gallery"
                         // maskClosable={false}
                         >
                             <Row gutter={[20, 20]}>
@@ -155,7 +225,7 @@ const DetailBookParams = (props) => {
                                                                 }}
                                                             />
                                                             {/* <div className={activeIndex === i ? "active" : ""}></div> */}
-                                                        </Col>
+                            {/* </Col>
                                                     )
                                                 })
                                             }
@@ -163,43 +233,84 @@ const DetailBookParams = (props) => {
                                     </div>
                                 </Col>
                             </Row>
-                        </Modal>
+                        </Modal> */}
 
-                    </div>
-                </Col>
+                        </div>
+                    </Col>
+                    {/*  */}
+                    <Col md={12} xs={24} sm={24} span={12}>
+                        <div className="content-detailbook">
+                            <div className="author" style={{ fontSize: '15px' }}>Tác giả: <a>Jo Hemmings</a></div>
+                            <div className="mainText" style={{ fontSize: '24px' }}>How Psychology Works - Hiểu Hết Về Tâm Lý Học</div>
+                            <div style={{ display: 'flex', gap: 10 }}>
+                                <Rate style={{ fontSize: '12px', }} allowHalf defaultValue={5} />
+                                <div className="vl"></div>
+                                <span >Đã bán 123</span>
+                            </div>
+                            <div className="price" style={{ padding: '15px', borderRadius: '3px', backgroundColor: 'RGBA( 169, 169, 169, 0.15)' }}>
+                                <span style={{ fontSize: '30px', fontWeight: "600", color: 'red' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(10000000)}</span>
+                            </div>
+                            <div>
+                                <Row gutter={[20, 20]}>
+                                    <Col span={4}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                                            <span > Vận chuyển </span>
+                                            <span> Số lượng </span>
+                                        </div>
+                                    </Col>
+                                    <Col span={16}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                                            <span>Miễn phí vận chuyển</span>
+                                            <InputNumber
+                                                addonBefore="-"
+                                                addonAfter="+"
+                                                defaultValue={100}
+                                                size="larger"
+                                                style={{ width: '29%' }}
+                                            />
+                                        </div>
+                                    </Col>
+                                </Row>
 
-                <Col>
-                    <div className="content-detailbook">
-                        <div>Tác giả: Jo Hemmings</div>
-                        <div>How Psychology Works - Hiểu Hết Về Tâm Lý Học</div>
-                        <div>
-                            <Rate style={{ fontSize: '12px', marginRight: '8px' }} allowHalf defaultValue={5} />
-                            <span >Đã bán 123</span>
-                        </div>
-                        <div>
-                            2423423423 ₫
-                        </div>
-                        <div>
-                            Vận chuyển Miễn phí vận chuyển
-                        </div>
-                        <div>
-                            <span> Số lượng </span>
-                            <InputNumber
-                                addonBefore="-"
-                                addonAfter="+"
-                                defaultValue={100}
-                                size="small"
-                            />
-                        </div>
-                        <div>
-                            <button>Thêm vào giỏ hàng</button>
-                            <button>Mua ngay</button>
-                        </div>
 
-                    </div>
-                </Col>
-            </Row>
+
+                            </div>
+
+                            <div className="btn" style={{ display: 'flex', gap: 25 }}>
+                                <button
+                                    className="add-cart"
+                                    style={{
+                                        maxWidth: "250px",
+                                        height: "48px",
+                                        padding: "0 15px",
+                                        fontSize: '14px',
+                                        color: '#d0011b',
+                                        border: '1px solid',
+                                        borderRadius: '3px',
+                                        background: "rgb(255 87 34 / 10%)",
+
+                                    }}><BsCartPlus /><span style={{ marginLeft: '5px' }}>Thêm vào giỏ hàng</span>
+                                </button>
+                                <button
+                                    className="purchase"
+                                    style={{
+                                        backgroundColor: '#ee4d2d',
+                                        height: "48px",
+                                        padding: '0 20px',
+                                        borderRadius: '3px',
+                                        border: '0px',
+                                        color: 'white'
+                                    }}
+                                >Mua ngay
+                                </button>
+                            </div>
+
+                        </div>
+                    </Col>
+                </Row>
+            </div >
         </div>
+
     )
 }
 
