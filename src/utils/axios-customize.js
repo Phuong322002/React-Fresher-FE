@@ -9,8 +9,9 @@ const instance = axios.create({
   });
 
   //Sending the bearer token with axios
+  //Gửi access_token lên BE và lấy lại data user khi mà F5 or refresh website
   instance.defaults.headers.common = {'Authorization': `Bearer ${localStorage.getItem('access_token')}`}
-
+////
   
 //Interceptor:
 // Add a request interceptor

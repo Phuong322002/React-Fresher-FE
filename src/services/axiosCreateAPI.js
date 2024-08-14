@@ -95,8 +95,11 @@ const deleteABook = (_id) => {
 }
 
 const updateABook = (_id, thumbnail, slider, mainText, author, price, sold, quantity, category) => {
-    
     return instance.put(`/api/v1/book/${_id}`, {thumbnail, slider, mainText, author, price, sold,quantity,category})
+}
+
+const getDataDetailBook = (_id) => {
+    return instance.get(`/api/v1/book/${_id}`)
 }
 
 export {
@@ -114,5 +117,6 @@ export {
     postUploadImgBook,
     postCreateABook,
     deleteABook,
-    updateABook
+    updateABook,
+    getDataDetailBook
 }

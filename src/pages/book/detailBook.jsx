@@ -7,6 +7,8 @@ import './detailBook.scss'
 import { Rate } from 'antd';
 import { useEffect, useRef, useState } from "react";
 import { BsCartPlus } from "react-icons/bs";
+import BookLoadingSkeleton from "./BookLoadingSkeleton";
+import { getDataDetailBook } from "../../services/axiosCreateAPI";
 
 
 const DetailBookParams = (props) => {
@@ -21,7 +23,8 @@ const DetailBookParams = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentIndexImg, setCurrentIndexImg] = useState(0)
     const [borderImg, setBoderImg] = useState(0)
-
+    const [dataDetailBook, setDataDetailBook] = useState({})
+    const [bookLoading, setBookLoading] = useState(false)
     // image detail
     const images = [
         {
@@ -38,6 +41,55 @@ const DetailBookParams = (props) => {
         },
 
     ];
+
+    useEffect(() => {
+
+        fetchDataDetailBook()
+
+
+    }, [id])
+
+    const fetchDataDetailBook = async () => {
+        setBookLoading(true)
+        const rs = await getDataDetailBook(id)
+        console.log('>> Check data detail book:', rs)
+        setBookLoading(false)
+        if (rs && rs.data) {
+            let arrth = []
+            let arrSli = []
+            let arr = []
+            if (rs?.data?.thumbnail) {
+                let thumb = {
+                    original: `${import.meta.env.VITE_BACKEND_URL}/images/book/${rs.data.thumbnail}`,
+                    thumbnail: `${import.meta.env.VITE_BACKEND_URL}/images/book/${rs.data.thumbnail}`,
+                    originalClass: 'image'
+                }
+                arrth.push(thumb)
+            }
+            if (rs?.data?.slider.length > 0) {
+                const slider = rs.data.slider.map((slider, index) => {
+                    return {
+                        original: `${import.meta.env.VITE_BACKEND_URL}/images/book/${slider}`,
+                        thumbnail: `${import.meta.env.VITE_BACKEND_URL}/images/book/${slider}`,
+
+                    }
+                })
+                arrSli = [...slider]
+            }
+            arr = [...arrth, ...arrSli]
+            console.log('arr', arr)
+
+            setDataDetailBook({
+                author: rs?.data?.author,
+                mainText: rs?.data?.mainText,
+                sold: rs?.data?.sold,
+                price: rs?.data?.price,
+                // quantity: rs.data.quantity,
+                images: arr
+            })
+        }
+    }
+    console.log('dataDetailBook', dataDetailBook.images)
 
     //Model show image
     const showModal = () => {
@@ -79,110 +131,123 @@ const DetailBookParams = (props) => {
     console.log('borderImg', borderImg)
 
 
+
     return (
         <div style={{
-            height: 'calc(100vh - 100px)',
+            // height: 'calc(100vh - 120px)',
+            height: 'fit-content',
             padding: '10px',
-            overflow: 'hidden'
+            // overflow: 'hidden'
         }}>
             <div className="main-detail">
                 <Row gutter={24}>
-                    {/* Col PC */}
-                    <Col md={12} xs={0} sm={0} span={12}>
-                        <div className="img-detail">
-                            <ImageGallery
-                                items={images}
-                                showBullets={false}
-                                showPlayButton={false}
-                                showFullscreenButton={false}
-                                showNav={false}
-                                preventDefaultTouchmoveEvent={true}
-                                slideOnThumbnailOver={true}
-                                onClick={showModal}
-                                renderLeftNav={() => <></>} //left arrow === <> </>
-                                renderRightNav={() => <></>}
-                                showIndex={true}
-                                onSlide={(index) => { displayImgCurrent(index) }}
-                            // startIndex={0}
-                            />
+                    {/* <BookLoadingSkeleton /> */}
+                    {bookLoading === true
+                        ?
+                        <BookLoadingSkeleton />
+                        :
+                        <>
+                            {/* Col PC */}
+                            <Col md={12} xs={0} sm={0} span={12}>
+                                <div className="img-detail">
+                                    <ImageGallery
+                                        items={dataDetailBook.images && dataDetailBook.images.length > 0 ?
+                                            dataDetailBook.images : []
+                                        }
+                                        showBullets={false}
+                                        showPlayButton={false}
+                                        showFullscreenButton={false}
+                                        showNav={false}
+                                        preventDefaultTouchmoveEvent={true}
+                                        slideOnThumbnailOver={true}
+                                        onClick={showModal}
+                                        renderLeftNav={() => <></>} //left arrow === <> </>
+                                        renderRightNav={() => <></>}
+                                        showIndex={true}
+                                        onSlide={(index) => { displayImgCurrent(index) }}
+                                        thumbnailClass='slider'
+                                    // startIndex={0}
+                                    />
 
-                            <Modal
-                                onOk={handleOk}
-                                width={'60vw'}
-                                open={isModalOpen}
-                                onCancel={handleCancel}
-                                footer={null} //hide footer
-                                closable={false} //hide close button
-                                className="modal-gallery"
-                            // maskClosable={false}
-                            >
-                                <Row gutter={24}>
-                                    <Col span={16}>
-                                        <ImageGallery
-                                            ref={refGallery}
-                                            items={images}
-                                            showPlayButton={false} //hide play button
-                                            showFullscreenButton={false} //hide fullscreen button
-                                            // startIndex={currentIndex} // start at current index
-                                            showThumbnails={false} //hide thumbnail
-                                            // onSlide={(i) => setActiveIndex(i)}
-                                            slideDuration={0} //duration between slices
-                                            showIndex={true}
-                                            startIndex={borderImg}
-                                            onSlide={(index) => { test(index) }}
+                                    <Modal
+                                        onOk={handleOk}
+                                        width={'60vw'}
+                                        open={isModalOpen}
+                                        onCancel={handleCancel}
+                                        footer={null} //hide footer
+                                        closable={false} //hide close button
+                                        className="modal-gallery"
+                                    // maskClosable={false}
+                                    >
+                                        <Row gutter={24}>
+                                            <Col span={16}>
+                                                <ImageGallery
+                                                    ref={refGallery}
+                                                    items={dataDetailBook.images && dataDetailBook.images.length > 0 ?
+                                                        dataDetailBook.images : []
+                                                    }
+                                                    showPlayButton={false} //hide play button
+                                                    showFullscreenButton={false} //hide fullscreen button
+                                                    // startIndex={currentIndex} // start at current index
+                                                    showThumbnails={false} //hide thumbnail
+                                                    // onSlide={(i) => setActiveIndex(i)}
+                                                    slideDuration={0} //duration between slices
+                                                    showIndex={true}
+                                                    startIndex={borderImg}
+                                                    onSlide={(index) => { test(index) }}
+                                                    originalClass='model-thumb'
+                                                />
+                                            </Col>
+                                            <Col span={8}>
+                                                <div style={{ padding: "5px 0 20px 0" }}>{'dsfds'}</div>
+                                                <div>
+                                                    <Row gutter={[20, 20]}>
+                                                        {
+                                                            dataDetailBook.images && dataDetailBook.images.length > 0 && dataDetailBook.images.map((item, i) => {
+                                                                return (
+                                                                    <Col key={`image-${i}`}>
+                                                                        <Image
+                                                                            style={currentIndexImg === i ? { border: '4px solid red' } : {}}
+                                                                            wrapperClassName={"img-normal"}
+                                                                            width={100}
+                                                                            height={100}
+                                                                            src={item.original}
+                                                                            preview={false}
+                                                                            onClick={() => {
+                                                                                handleClickThumbnail(i)
+                                                                            }}
+                                                                        />
+                                                                        {/* <div className={activeIndex === i ? "active" : ""}></div> */}
+                                                                    </Col>
+                                                                )
+                                                            })
+                                                        }
+                                                    </Row>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </Modal>
 
-                                        />
-                                    </Col>
-                                    <Col span={8}>
-                                        <div style={{ padding: "5px 0 20px 0" }}>{'dsfds'}</div>
-                                        <div>
-                                            <Row gutter={[20, 20]}>
-                                                {
-                                                    images?.map((item, i) => {
-                                                        return (
-                                                            <Col key={`image-${i}`}>
-                                                                <Image
-                                                                    style={currentIndexImg === i ? { border: '4px solid red' } : {}}
-                                                                    wrapperClassName={"img-normal"}
-                                                                    width={100}
-                                                                    height={100}
-                                                                    src={item.original}
-                                                                    preview={false}
-                                                                    onClick={() => {
-                                                                        handleClickThumbnail(i)
-                                                                    }}
-                                                                />
-                                                                {/* <div className={activeIndex === i ? "active" : ""}></div> */}
-                                                            </Col>
-                                                        )
-                                                    })
-                                                }
-                                            </Row>
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </Modal>
+                                </div>
+                            </Col>
 
-                        </div>
-                    </Col>
-
-                    {/* Col mobile */}
-                    <Col md={0} xs={24} sm={24} span={12}>
-                        <div className="img-detail-mobile">
-                            <ImageGallery
-                                items={images}
-                                showBullets={false}
-                                showPlayButton={false}
-                                showFullscreenButton={false}
-                                showNav={false}
-                                preventDefaultTouchmoveEvent={true}
-                                slideOnThumbnailOver={true}
-                                onClick={false}
-                                renderLeftNav={() => <></>} //left arrow === <> </>
-                                renderRightNav={() => <></>}
-                                showThumbnails={false}
-                            />
-                            {/* <Modal
+                            {/* Col mobile */}
+                            <Col md={0} xs={24} sm={24} span={12}>
+                                <div className="img-detail-mobile">
+                                    <ImageGallery
+                                        items={images}
+                                        showBullets={false}
+                                        showPlayButton={false}
+                                        showFullscreenButton={false}
+                                        showNav={false}
+                                        preventDefaultTouchmoveEvent={true}
+                                        slideOnThumbnailOver={true}
+                                        onClick={false}
+                                        renderLeftNav={() => <></>} //left arrow === <> </>
+                                        renderRightNav={() => <></>}
+                                        showThumbnails={false}
+                                    />
+                                    {/* <Modal
                             onOk={handleOk}
                             width={'60vw'}
                             open={isModalOpen}
@@ -225,7 +290,7 @@ const DetailBookParams = (props) => {
                                                                 }}
                                                             />
                                                             {/* <div className={activeIndex === i ? "active" : ""}></div> */}
-                            {/* </Col>
+                                    {/* </Col>
                                                     )
                                                 })
                                             }
@@ -235,81 +300,144 @@ const DetailBookParams = (props) => {
                             </Row>
                         </Modal> */}
 
-                        </div>
-                    </Col>
-                    {/*  */}
-                    <Col md={12} xs={24} sm={24} span={12}>
-                        <div className="content-detailbook">
-                            <div className="author" style={{ fontSize: '15px' }}>Tác giả: <a>Jo Hemmings</a></div>
-                            <div className="mainText" style={{ fontSize: '24px' }}>How Psychology Works - Hiểu Hết Về Tâm Lý Học</div>
-                            <div style={{ display: 'flex', gap: 10 }}>
-                                <Rate style={{ fontSize: '12px', }} allowHalf defaultValue={5} />
-                                <div className="vl"></div>
-                                <span >Đã bán 123</span>
-                            </div>
-                            <div className="price" style={{ padding: '15px', borderRadius: '3px', backgroundColor: 'RGBA( 169, 169, 169, 0.15)' }}>
-                                <span style={{ fontSize: '30px', fontWeight: "600", color: 'red' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(10000000)}</span>
-                            </div>
-                            <div>
-                                <Row gutter={[20, 20]}>
-                                    <Col span={4}>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                                            <span > Vận chuyển </span>
-                                            <span> Số lượng </span>
-                                        </div>
-                                    </Col>
-                                    <Col span={16}>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                                            <span>Miễn phí vận chuyển</span>
-                                            <InputNumber
-                                                addonBefore="-"
-                                                addonAfter="+"
-                                                defaultValue={100}
-                                                size="larger"
-                                                style={{ width: '29%' }}
-                                            />
-                                        </div>
-                                    </Col>
-                                </Row>
+                                </div>
+                            </Col>
+                            {/*  */}
+                            <Col md={12} xs={24} sm={24} span={12}>
+                                <div className="content-detailbook">
+                                    <div className="author" style={{ fontSize: '15px' }}>Tác giả: <a>{dataDetailBook.author}</a></div>
+                                    <div className="mainText" style={{ fontSize: '24px' }}>{dataDetailBook.mainText}</div>
+                                    <div style={{ display: 'flex', gap: 10 }}>
+                                        <Rate style={{ fontSize: '12px', }} allowHalf defaultValue={5} />
+                                        <div className="vl"></div>
+                                        <span >Đã bán {dataDetailBook.sold}</span>
+                                    </div>
+                                    <div className="price" style={{ padding: '15px', borderRadius: '3px', backgroundColor: 'RGBA( 169, 169, 169, 0.15)' }}>
+                                        <span style={{ fontSize: '30px', fontWeight: "600", color: 'red' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(dataDetailBook.price)}</span>
+                                    </div>
+                                    <div>
+                                        <Row gutter={[20, 20]}>
+                                            <Col span={4}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                                                    <span > Vận chuyển </span>
+                                                    <span> Số lượng </span>
+                                                </div>
+                                            </Col>
+                                            <Col span={16}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                                                    <span>Miễn phí vận chuyển</span>
+                                                    <div style={{ display: 'flex' }}>
+                                                        <button style={{
+                                                            alignItems: 'center',
+                                                            background: 'transparent',
+                                                            // border: '0',
+                                                            border: '1px solid rgba(0, 0, 0, .09)',
+                                                            borderRadius: "2px",
+                                                            color: 'rgba(0, 0, 0, .8)',
+                                                            cursor: 'pointer',
+                                                            display: 'flex',
+                                                            fontSize: '.875rem',
+                                                            fontWeight: '300',
+                                                            height: '32px',
+                                                            justifyContent: 'center',
+                                                            letterSpacing: '0',
+                                                            lineHeight: '1',
+                                                            outline: 'none',
+                                                            // transition: backgroundColor .1s cubic-bezier(.4,0,.6,1);
+                                                            width: "32px"
+
+                                                        }}>-</button>
+                                                        <input value={1} style={{
+                                                            webkitAppearance: ' none',
+                                                            border: '1px solid rgba(0, 0, 0, .09)',
+                                                            borderLeft: '0px',
+                                                            borderRadius: '0px',
+                                                            borderRight: "0px",
+                                                            boxSizing: "border-box",
+                                                            cursor: "text",
+                                                            fontSize: "16px",
+                                                            fontWeight: '400',
+                                                            height: '32px',
+                                                            textAlign: 'center',
+                                                            width: '50px',
+                                                            alignItems: 'center',
+                                                            background: 'transparent',
+                                                            color: 'rgba(0, 0, 0, .8)',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            letterSpacing: '0',
+                                                            // lineHeight: '1',
+                                                            outline: 'none',
+                                                            transition: 'background-color .1s',
+
+                                                        }} type="text" />
+                                                        <button style={{
+                                                            alignItems: 'center',
+                                                            background: 'transparent',
+                                                            // border: '0',
+                                                            border: '1px solid rgba(0, 0, 0, .09)',
+                                                            borderRadius: "2px",
+                                                            color: 'rgba(0, 0, 0, .8)',
+                                                            cursor: 'pointer',
+                                                            display: 'flex',
+                                                            fontSize: '.875rem',
+                                                            fontWeight: '300',
+                                                            height: '32px',
+                                                            justifyContent: 'center',
+                                                            letterSpacing: '0',
+                                                            lineHeight: '1',
+                                                            outline: 'none',
+                                                            // transition: backgroundColor .1s cubic-bezier(.4,0,.6,1);
+                                                            width: "32px"
+
+                                                        }}>+</button>
+
+                                                    </div>
+                                                </div>
+                                            </Col>
+                                        </Row>
 
 
 
-                            </div>
+                                    </div>
 
-                            <div className="btn" style={{ display: 'flex', gap: 25 }}>
-                                <button
-                                    className="add-cart"
-                                    style={{
-                                        maxWidth: "250px",
-                                        height: "48px",
-                                        padding: "0 15px",
-                                        fontSize: '14px',
-                                        color: '#d0011b',
-                                        border: '1px solid',
-                                        borderRadius: '3px',
-                                        background: "rgb(255 87 34 / 10%)",
+                                    <div className="btn" style={{ display: 'flex', gap: 25 }}>
+                                        <button
+                                            className="add-cart"
+                                            style={{
+                                                maxWidth: "250px",
+                                                height: "48px",
+                                                padding: "0 15px",
+                                                fontSize: '14px',
+                                                color: '#d0011b',
+                                                border: '1px solid',
+                                                borderRadius: '3px',
+                                                background: "rgb(255 87 34 / 10%)",
 
-                                    }}><BsCartPlus /><span style={{ marginLeft: '5px' }}>Thêm vào giỏ hàng</span>
-                                </button>
-                                <button
-                                    className="purchase"
-                                    style={{
-                                        backgroundColor: '#ee4d2d',
-                                        height: "48px",
-                                        padding: '0 20px',
-                                        borderRadius: '3px',
-                                        border: '0px',
-                                        color: 'white'
-                                    }}
-                                >Mua ngay
-                                </button>
-                            </div>
+                                            }}><BsCartPlus /><span style={{ marginLeft: '5px' }}>Thêm vào giỏ hàng</span>
+                                        </button>
+                                        <button
+                                            className="purchase"
+                                            style={{
+                                                backgroundColor: '#ee4d2d',
+                                                height: "48px",
+                                                padding: '0 20px',
+                                                borderRadius: '3px',
+                                                border: '0px',
+                                                color: 'white'
+                                            }}
+                                        >Mua ngay
+                                        </button>
+                                    </div>
 
-                        </div>
-                    </Col>
+                                </div>
+                            </Col>
+                        </>
+                    }
+
                 </Row>
             </div >
-        </div>
+        </div >
 
     )
 }

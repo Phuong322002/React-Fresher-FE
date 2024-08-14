@@ -312,7 +312,7 @@ const HomePage = () => {
                                 {/* <Checkbox.Group options={options} onChange={onChangeCheckBox} />
                                     </Col>
                                 </Row> */}
-                                <Checkbox.Group defaultValue={['Apple']} onChange={onChangeCheckBox}>
+                                <Checkbox.Group onChange={onChangeCheckBox}>
                                     <Row gutter={24}>
                                         {options.map((option, index) => (
                                             <Col span={12} key={index}>

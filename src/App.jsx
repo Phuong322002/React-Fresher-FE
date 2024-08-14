@@ -36,7 +36,7 @@ const Layout = () => {
         minHeight: '100vh',
         // minHeight: 'fit-content',
         // border: '1px solid red',
-        overflow: 'hidden'
+        // overflow: 'hidden'
 
       }}>
       <div className="header">
@@ -54,7 +54,14 @@ const Layout = () => {
         <Outlet />
       </div>
 
-      <div className="footer">
+      <div style={{
+        // border: '1px solid',
+        height: 35,
+        // textAlign: 'center',
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center'
+      }}>
         <FooterComponent />
       </div>
     </div >
@@ -97,6 +104,10 @@ const App = () => {
 
   const dispatch = useDispatch()
 
+
+
+  //api fetchAccount này sẽ truyền header và header đã được truyền
+  // ở bên axios customize instance.defaults.headers.common = {'Authorization': `Bearer ${localStorage.getItem('access_token')}`}
   const getDataUSer = async () => {
     if (window.location.pathname === '/login'
       // || window.location.pathname === '/'

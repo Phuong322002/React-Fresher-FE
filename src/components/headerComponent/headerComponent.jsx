@@ -105,7 +105,7 @@ const HeaderComponent = () => {
             <div className="content-header">
                 <div className="title-header">
                     <div className="icon"><GiReactor /></div>
-                    <span className="text-header">NEVER GIVE UP</span>
+                    <span className="text-header" onClick={() => navigate('/')}>NEVER GIVE UP</span>
                 </div>
 
                 <div className="input-header">

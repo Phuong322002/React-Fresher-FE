@@ -3,7 +3,7 @@ import './footer.scss'
 const FooterComponent = () => {
 
     return (
-        <div className="footer">
+        <div >
             FOOTER - @ React Fresher
         </div>
     )

@@ -106,7 +106,7 @@ const UpdateUser = (props) => {
                         >
                             <Popover
                                 placement="left"
-                                title={text}
+                                title={text()}
                                 content={content}
                                 trigger="click"
                                 open={open}

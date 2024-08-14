@@ -1,9 +1,9 @@
 
 .main-detail{
-    border: 1px solid red;
+    // border: 1px solid red;
 background-color: white;
 margin: 15px 50px;
-padding: 25px;
+padding: 20px;
 border-radius: 5px;
     .img-detail{
         // border: 1px solid;
@@ -18,7 +18,7 @@ border-radius: 5px;
         // border: 1px solid;
         display: flex;
         flex-direction: column;
-        gap: 15px;
+        gap: 25px;
         .vl {
             border-left: 2px solid rgba(154, 158, 154, 0.5);
             height: 16px;
@@ -38,6 +38,7 @@ border-radius: 5px;
 
            
     }
+    
 }
 
 
@@ -45,8 +46,25 @@ border-radius: 5px;
     .main-detail{
         padding: 10px;
         width: 100%;
-margin: 0px;
-padding: 0px;
+        margin: 0px;
+        padding: 0px;
 
 }
 }
+
+.image-gallery-slide img {
+    width: 100%;
+    height: 450px;
+    max-height: 80vh;
+    object-fit: cover;
+    overflow: hidden;
+    object-position: center center;
+
+}
+
+.image-gallery-thumbnail img {
+    width: 10px;
+    height: 85px;
+  }
+
+  
