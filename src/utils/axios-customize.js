@@ -9,7 +9,7 @@ const instance = axios.create({
   });
 
   //Sending the bearer token with axios
-  //Gửi access_token lên BE và lấy lại data user khi mà F5 or refresh website
+  // WAY 1: gửi accesstoken lên BE để lấy lại data: Gửi access_token lên BE và lấy lại data user khi mà F5 or refresh website
   instance.defaults.headers.common = {'Authorization': `Bearer ${localStorage.getItem('access_token')}`}
 ////
   
@@ -50,6 +50,7 @@ instance.interceptors.response.use(function (response) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
 
+    //WAY 2: cũng để gửi accesstoken lên BE để lấy lại data
      ///////////// b1) REFRESH_TOKEN KHI ACCESS_TOKEN HẾT HẠN
      if (error.config && error.response && +error.response.status === 401 && !error.config.headers[NO_RETRY_HEADER]) {
       //PHÂN TÍCH:

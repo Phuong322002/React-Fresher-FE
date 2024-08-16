@@ -1,0 +1,97 @@
+
+
+.main-order{
+        padding: 15px 20px 30px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        // border: 1px solid red;
+        height: fit-content;
+        .main-left-order{
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            .left-order{
+                border-radius: 3px;
+                background-color: white;
+                .content-left-moblie{
+                        display: none;
+                }
+                .content-left{
+                    display: flex;
+                    gap: 50px;
+                    align-items: center;
+                    // padding: 15px;
+                    margin: 15px;
+                    .img-book{
+        
+                    }
+        
+                    .name-book{
+                        width: 20%;
+                    }
+        
+                    .price-book{
+        
+                    }
+        
+                    .quantity-book{
+                    }
+        
+                    .total-price{
+                        
+                        text-align: center;
+                        width: 35%;
+                        margin-left: 50px;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .content-left{
+                        display: none;
+                    }
+
+                    .content-left-moblie{
+                        display: flex;
+                        gap: 8px;
+                        align-items: center;
+                        // padding: 15px;
+                        margin: 5px;
+                        .img-book-mobile{
+                            
+                        }
+                
+                        .name-book-mobile{
+                            width: 100px;
+                            font-size: 12px;
+                            // border: 1px solid;
+                        }
+                
+                        .price-book-mobile{
+                
+                        }
+                
+                        .quantity-book-mobile{
+                        }
+                
+                        .total-price-mobile{
+                            text-align: center;
+                            // width: 3%;
+                            margin-left: 5px;
+                        }
+                    }
+                }
+            }
+        }
+    
+
+    .right-order{
+        background-color: white;
+        border-radius: 3px;
+        .main-right-order{
+            padding: 20px;
+            
+        }
+    }
+}
+

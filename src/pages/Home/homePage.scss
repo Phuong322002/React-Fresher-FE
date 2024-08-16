@@ -1,7 +1,7 @@
 .main-home {
     // border: 2px solid green;
     max-width: 100vw;
-    height: calc(100vh - 20px);
+    height: 100vh;
     background-color: RGBA( 169, 169, 169, 0.2);
     // padding: 10px 0px;
     .body-book {
@@ -26,7 +26,6 @@
                 width: calc(20% - 20px);
                 padding: 5px;
                 box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-                width: calc(20% - 20px);
                 height: 300px;
                 transition: all .5s ease-in-out;
                 &:hover {

@@ -2,19 +2,21 @@ import { useLocation } from "react-router-dom"
 import { useParams } from "react-router-dom";
 import "react-image-gallery/styles/scss/image-gallery.scss";
 import ImageGallery from "react-image-gallery";
-import { Col, Image, InputNumber, Modal, Row } from "antd";
+import { Col, Image, InputNumber, message, Modal, Row } from "antd";
 import './detailBook.scss'
 import { Rate } from 'antd';
 import { useEffect, useRef, useState } from "react";
 import { BsCartPlus } from "react-icons/bs";
 import BookLoadingSkeleton from "./BookLoadingSkeleton";
 import { getDataDetailBook } from "../../services/axiosCreateAPI";
-
+import { doAddtoCartAction } from "../../redux/order/orderSlice";
+import { useDispatch } from "react-redux";
 
 const DetailBookParams = (props) => {
 
     const location = useLocation();
     const refGallery = useRef(null)
+    const dispatch = useDispatch()
 
     const param = new URLSearchParams(location.search)
     const id = param?.get('id')
@@ -25,6 +27,7 @@ const DetailBookParams = (props) => {
     const [borderImg, setBoderImg] = useState(0)
     const [dataDetailBook, setDataDetailBook] = useState({})
     const [bookLoading, setBookLoading] = useState(false)
+    const [currentQuatity, setCurrnentQuantity] = useState(1)
     // image detail
     const images = [
         {
@@ -43,16 +46,13 @@ const DetailBookParams = (props) => {
     ];
 
     useEffect(() => {
-
         fetchDataDetailBook()
-
-
     }, [id])
 
     const fetchDataDetailBook = async () => {
         setBookLoading(true)
         const rs = await getDataDetailBook(id)
-        console.log('>> Check data detail book:', rs)
+        console.log('>> Check data detail book:', rs.data)
         setBookLoading(false)
         if (rs && rs.data) {
             let arrth = []
@@ -84,12 +84,13 @@ const DetailBookParams = (props) => {
                 mainText: rs?.data?.mainText,
                 sold: rs?.data?.sold,
                 price: rs?.data?.price,
-                // quantity: rs.data.quantity,
-                images: arr
+                quantity: rs?.data?.quantity,
+                images: arr,
+                _id: rs?.data?._id
             })
         }
     }
-    console.log('dataDetailBook', dataDetailBook.images)
+    console.log('dataDetailBook', dataDetailBook)
 
     //Model show image
     const showModal = () => {
@@ -130,8 +131,38 @@ const DetailBookParams = (props) => {
 
     console.log('borderImg', borderImg)
 
+    // onChange input
+    const handleOnchangeInput = (e) => {
+        console.log('e.target.value', e.target.value)
+        setCurrnentQuantity(e.target.value)
+    }
+    // click +- change quantity
+    const handleMinusPlus = (e, type) => {
+        console.log('type', type)
+        if (type === 'MINUS') {
+            // alert('-')
+            if (currentQuatity <= 1) return
+            setCurrnentQuantity(+currentQuatity - 1)
+        }
+        if (type === 'PLUS') {
+            // alert(typeof +currentQuatity)
+            setCurrnentQuantity(+currentQuatity + 1)
 
-
+        }
+    }
+    // handle add to cart 
+    const handleAddToCart = (quantity, detailBook) => {
+        // alert('cc')
+        console.log('quantity, detailBook', quantity, detailBook)
+        dispatch(doAddtoCartAction(
+            {
+                quantity,
+                _id: detailBook._id,
+                detailBook
+            }
+        ))
+        message.success('Sản phẩm đã được thêm vào giỏ hàng', [2])
+    }
     return (
         <div style={{
             // height: 'calc(100vh - 120px)',
@@ -327,70 +358,83 @@ const DetailBookParams = (props) => {
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                                                     <span>Miễn phí vận chuyển</span>
                                                     <div style={{ display: 'flex' }}>
-                                                        <button style={{
-                                                            alignItems: 'center',
-                                                            background: 'transparent',
-                                                            // border: '0',
-                                                            border: '1px solid rgba(0, 0, 0, .09)',
-                                                            borderRadius: "2px",
-                                                            color: 'rgba(0, 0, 0, .8)',
-                                                            cursor: 'pointer',
-                                                            display: 'flex',
-                                                            fontSize: '.875rem',
-                                                            fontWeight: '300',
-                                                            height: '32px',
-                                                            justifyContent: 'center',
-                                                            letterSpacing: '0',
-                                                            lineHeight: '1',
-                                                            outline: 'none',
-                                                            // transition: backgroundColor .1s cubic-bezier(.4,0,.6,1);
-                                                            width: "32px"
+                                                        <button
+                                                            style={{
+                                                                alignItems: 'center',
+                                                                background: 'transparent',
+                                                                // border: '0',
+                                                                border: '1px solid rgba(0, 0, 0, .09)',
+                                                                borderRadius: "2px",
+                                                                color: 'rgba(0, 0, 0, .8)',
+                                                                cursor: 'pointer',
+                                                                display: 'flex',
+                                                                fontSize: '.875rem',
+                                                                fontWeight: '300',
+                                                                height: '32px',
+                                                                justifyContent: 'center',
+                                                                letterSpacing: '0',
+                                                                lineHeight: '1',
+                                                                outline: 'none',
+                                                                // transition: backgroundColor .1s cubic-bezier(.4,0,.6,1);
+                                                                width: "32px"
+                                                            }}
+                                                            onClick={(event) => { handleMinusPlus(event, "MINUS") }}
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <input
+                                                            value={currentQuatity}
+                                                            style={{
+                                                                webkitAppearance: ' none',
+                                                                border: '1px solid rgba(0, 0, 0, .09)',
+                                                                borderLeft: '0px',
+                                                                borderRadius: '0px',
+                                                                borderRight: "0px",
+                                                                boxSizing: "border-box",
+                                                                cursor: "text",
+                                                                fontSize: "16px",
+                                                                fontWeight: '400',
+                                                                height: '32px',
+                                                                textAlign: 'center',
+                                                                width: '50px',
+                                                                alignItems: 'center',
+                                                                background: 'transparent',
+                                                                color: 'rgba(0, 0, 0, .8)',
+                                                                display: 'flex',
+                                                                justifyContent: 'center',
+                                                                letterSpacing: '0',
+                                                                // lineHeight: '1',
+                                                                outline: 'none',
+                                                                transition: 'background-color .1s',
 
-                                                        }}>-</button>
-                                                        <input value={1} style={{
-                                                            webkitAppearance: ' none',
-                                                            border: '1px solid rgba(0, 0, 0, .09)',
-                                                            borderLeft: '0px',
-                                                            borderRadius: '0px',
-                                                            borderRight: "0px",
-                                                            boxSizing: "border-box",
-                                                            cursor: "text",
-                                                            fontSize: "16px",
-                                                            fontWeight: '400',
-                                                            height: '32px',
-                                                            textAlign: 'center',
-                                                            width: '50px',
-                                                            alignItems: 'center',
-                                                            background: 'transparent',
-                                                            color: 'rgba(0, 0, 0, .8)',
-                                                            display: 'flex',
-                                                            justifyContent: 'center',
-                                                            letterSpacing: '0',
-                                                            // lineHeight: '1',
-                                                            outline: 'none',
-                                                            transition: 'background-color .1s',
-
-                                                        }} type="text" />
-                                                        <button style={{
-                                                            alignItems: 'center',
-                                                            background: 'transparent',
-                                                            // border: '0',
-                                                            border: '1px solid rgba(0, 0, 0, .09)',
-                                                            borderRadius: "2px",
-                                                            color: 'rgba(0, 0, 0, .8)',
-                                                            cursor: 'pointer',
-                                                            display: 'flex',
-                                                            fontSize: '.875rem',
-                                                            fontWeight: '300',
-                                                            height: '32px',
-                                                            justifyContent: 'center',
-                                                            letterSpacing: '0',
-                                                            lineHeight: '1',
-                                                            outline: 'none',
-                                                            // transition: backgroundColor .1s cubic-bezier(.4,0,.6,1);
-                                                            width: "32px"
-
-                                                        }}>+</button>
+                                                            }}
+                                                            type="text"
+                                                            onChange={(event) => { handleOnchangeInput(event) }}
+                                                        />
+                                                        <button
+                                                            style={{
+                                                                alignItems: 'center',
+                                                                background: 'transparent',
+                                                                // border: '0',
+                                                                border: '1px solid rgba(0, 0, 0, .09)',
+                                                                borderRadius: "2px",
+                                                                color: 'rgba(0, 0, 0, .8)',
+                                                                cursor: 'pointer',
+                                                                display: 'flex',
+                                                                fontSize: '.875rem',
+                                                                fontWeight: '300',
+                                                                height: '32px',
+                                                                justifyContent: 'center',
+                                                                letterSpacing: '0',
+                                                                lineHeight: '1',
+                                                                outline: 'none',
+                                                                // transition: backgroundColor .1s cubic-bezier(.4,0,.6,1);
+                                                                width: "32px"
+                                                            }}
+                                                            onClick={(event) => { handleMinusPlus(event, "PLUS") }}
+                                                        >
+                                                            +
+                                                        </button>
 
                                                     </div>
                                                 </div>
@@ -413,8 +457,11 @@ const DetailBookParams = (props) => {
                                                 border: '1px solid',
                                                 borderRadius: '3px',
                                                 background: "rgb(255 87 34 / 10%)",
-
-                                            }}><BsCartPlus /><span style={{ marginLeft: '5px' }}>Thêm vào giỏ hàng</span>
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={() => { handleAddToCart(+currentQuatity, dataDetailBook) }}
+                                        >
+                                            <BsCartPlus /><span style={{ marginLeft: '5px' }}>Thêm vào giỏ hàng</span>
                                         </button>
                                         <button
                                             className="purchase"

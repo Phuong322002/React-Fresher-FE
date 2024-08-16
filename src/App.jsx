@@ -26,6 +26,7 @@ import './styles/app.scss'
 import UserTableAdmin from "./components/userAdmin/userAdmin";
 import ManageBook from "./components/bookAdmin/bookComponent";
 import DetailBookParams from "./pages/book/detailBook";
+import IndexOrderBook from "./pages/Order/indexOrderBook";
 
 const Layout = () => {
   return (
@@ -47,8 +48,7 @@ const Layout = () => {
         style={{
           // border: "1px solid green",
           backgroundColor: "RGBA( 169, 169, 169, 0.2)",
-          height: 'fit-content',
-
+          height: '100vh',
         }}
       >
         <Outlet />
@@ -56,11 +56,15 @@ const Layout = () => {
 
       <div style={{
         // border: '1px solid',
-        height: 35,
+        // height: '35px',
         // textAlign: 'center',
         alignItems: 'center',
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: 'RGBA( 0, 191, 255, 0.5 )',
+        position: 'absolute',
+        // bottom: 0,
+        width: '100%'
       }}>
         <FooterComponent />
       </div>
@@ -139,8 +143,8 @@ const App = () => {
           element: <DetailBookParams />
         },
         {
-          path: 'ex2',
-          element: <Ex2 />
+          path: 'order',
+          element: <IndexOrderBook />
         }
       ]
     },
@@ -176,7 +180,7 @@ const App = () => {
     {
       path: "/register",
       element: <RegisterComponent />
-    }
+    },
   ])
   return (
     <>

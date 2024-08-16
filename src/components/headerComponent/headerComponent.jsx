@@ -1,12 +1,12 @@
 import { GiReactor } from "react-icons/gi";
 import { BsCart3 } from "react-icons/bs";
 import './header.scss'
-import { Divider, Input } from 'antd';
+import { Button, Col, Divider, Image, Input, Popover, Row } from 'antd';
 import { FcSearch } from "react-icons/fc";
 import { Badge } from 'antd';
 import { RiAccountCircleFill } from "react-icons/ri";
 import { FaBars } from "react-icons/fa";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Drawer } from 'antd';
 import { Dropdown, message, Space, } from 'antd';
 import { MdManageAccounts } from "react-icons/md";
@@ -19,10 +19,13 @@ import { doLogoutUser } from "../../redux/account/accountSlice";
 import { FcManager } from "react-icons/fc";
 import { Avatar } from "antd";
 import { UserOutlined } from '@ant-design/icons';
-
+import { isArray } from "lodash";
 
 const HeaderComponent = () => {
     const [open, setOpen] = useState(false);
+    const [lengthCart, setLengthCart] = useState(0)
+    const [arrBook, setArrBook] = useState([])
+
     const showDrawer = () => {
         setOpen(true);
     };
@@ -38,7 +41,24 @@ const HeaderComponent = () => {
 
     const user = useSelector(state => state.account.user)
 
-    console.log(">> check user:", user)
+    const arrCart = useSelector(state => state?.order?.carts)
+
+
+    // const length = arrCart?.length
+
+    // console.log(">> check user:", user)
+
+    useEffect(() => {
+        if (isArray(arrCart)) {
+            setLengthCart(arrCart.length)
+            setArrBook(arrCart)
+        }
+    }, [arrCart])
+
+    console.log('lengthCart', lengthCart)
+    console.log('arrCart', arrCart)
+    console.log('arrBook', arrBook)
+
 
 
 
@@ -56,6 +76,7 @@ const HeaderComponent = () => {
             message.success(rs.data, [2]);
             navigate('/')
         }
+        setLengthCart(0)
     }
 
     const items = [
@@ -67,7 +88,7 @@ const HeaderComponent = () => {
         {
             label: <span onClick={() => { LogoutUser() }}>Đăng Xuất</span>,
             key: '2',
-            icon: <IoLogOutOutline style={{ fontSize: '18px' }} />,
+            icon: <IoLogOutOutline onClick={() => { LogoutUser() }} style={{ fontSize: '18px' }} />,
         }
     ];
     if (isAuthenticated === true && user.role === 'ADMIN') {
@@ -98,6 +119,41 @@ const HeaderComponent = () => {
 
     const imageBackendPng = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`
 
+    //Popover Cart
+    const text = <span>Sản phẩm mới thêm</span>;
+    const content = (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 15, }}>
+            {arrBook && arrBook.length > 0 && arrBook.map((book, index) => {
+
+                return (
+                    <>
+                        <div style={{ display: 'flex', gap: 15 }}>
+                            <div>
+                                <Image
+                                    width={60}
+                                    height={55}
+                                    src={`${book?.detailBook?.images[0].original}`}
+                                />
+                            </div>
+                            <div style={{ width: '200px' }}>
+                                {book.detailBook.mainText}
+                            </div>
+                            <div style={{ color: 'red' }}>
+                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.detailBook.price)}
+                            </div>
+                        </div>
+                    </>
+                )
+            })}
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button onClick={() => navigate('order')} style={{ backgroundColor: 'red', color: 'white', borderRadius: '2px' }} danger>Xem giỏ hàng</Button>
+
+            </div>
+        </div>
+
+    );
+    const buttonWidth = 70;
+
     return (
         <>
             {/**/}
@@ -120,13 +176,19 @@ const HeaderComponent = () => {
 
                 <div className="cart">
                     {/* <BsCart3 /> */}
-                    <a href="#">
-                        <Badge size="small" count={5}>
+                    <Popover
+                        placement="bottomRight"
+                        title={text}
+                        content={content}
+
+                    >
+                        <Badge size="small" count={lengthCart} showZero={true}>
                             <BsCart3 style={{ fontSize: '20px', color: '#00FFFF' }} shape="square" />
                         </Badge>
-                    </a>
-
+                    </Popover>
                 </div>
+
+
 
                 <div className="vl"></div>
 
