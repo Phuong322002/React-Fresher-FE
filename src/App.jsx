@@ -27,6 +27,7 @@ import UserTableAdmin from "./components/userAdmin/userAdmin";
 import ManageBook from "./components/bookAdmin/bookComponent";
 import DetailBookParams from "./pages/book/detailBook";
 import IndexOrderBook from "./pages/Order/indexOrderBook";
+import OrderHistory from "./pages/Order/orderHistory";
 
 const Layout = () => {
   return (
@@ -48,7 +49,7 @@ const Layout = () => {
         style={{
           // border: "1px solid green",
           backgroundColor: "RGBA( 169, 169, 169, 0.2)",
-          height: '100vh',
+          height: 'fit-content',
         }}
       >
         <Outlet />
@@ -145,6 +146,10 @@ const App = () => {
         {
           path: 'order',
           element: <IndexOrderBook />
+        },
+        {
+          path: 'history',
+          element: <OrderHistory />
         }
       ]
     },

@@ -30,7 +30,7 @@ const HomePage = () => {
 
     // Form
     const onFinish = (values) => {
-        console.log('Success:', values.category);
+        console.log('Success:', values);
         let p = ''
         if (values?.range?.from > 0 && values?.range?.to > 0) {
             p += `&price>=${values.range.from}&price<=${values.range.to}`

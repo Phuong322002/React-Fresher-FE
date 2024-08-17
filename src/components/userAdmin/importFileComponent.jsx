@@ -43,8 +43,9 @@ const ImportFileUser = (props) => {
             if (status === 'done') {
                 // GET DATA EXCEL  và chế biến nó 
                 if (info.fileList && info.fileList.length > 0) {
-                    /// lấy file excel
+                    /// lấy file 
                     const file = info.fileList[0].originFileObj;
+                    console.log('file', info)
                     //
                     let reader = new FileReader();
                     reader.readAsArrayBuffer(file);

@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Form, Input, Row } from "antd"
+import { Button, Col, Divider, Form, Input, message, Row } from "antd"
 import './order.scss'
 import { Image } from 'antd';
 import { InputNumber } from 'antd';
@@ -15,16 +15,19 @@ import TextArea from "antd/es/input/TextArea";
 import { Radio } from 'antd';
 import { Result } from 'antd';
 import { doOrderSuccessAction } from "../../redux/order/orderSlice";
-
+import { postCreateAnOrder } from "../../services/axiosCreateAPI";
+import { useNavigate } from "react-router-dom";
 
 const IndexOrderBook = () => {
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const [form] = Form.useForm()
     const [sumPrice, setSumPrice] = useState(0)
     const [stateRight, setStatusRight] = useState(false)
     const [stateOrderSucc, setStateOrder] = useState(false)
     const [currentStep, setCurrentStep] = useState(1)
+    const [loadingOrder, setLoadingOder] = useState(false)
     const handleInputNumber = (value, book) => {
 
         console.log('changed', value, book);
@@ -43,7 +46,6 @@ const IndexOrderBook = () => {
     const user = useSelector(state => state.account.user)
     console.log('user order', user)
 
-    console.log('cart', cart)
 
 
     useEffect(() => {
@@ -55,15 +57,13 @@ const IndexOrderBook = () => {
         console.log('sum', sum)
         setSumPrice(sum)
 
-
         // if (cart && cart.length === 0) {
         //     setCurrentStep(0)
         // }
-
-
     }, [cart])
 
     console.log('sumPrice', sumPrice)
+    console.log('cart', cart)
 
 
     // dele book in cart
@@ -72,12 +72,44 @@ const IndexOrderBook = () => {
     }
 
     //order
-    const onFinish = (values) => {
-        console.log('Success:', values);
-        setStateOrder(true)
-        setCurrentStep(3)
-        dispatch(doOrderSuccessAction([]))
+    const onFinish = async (values) => {
+        console.log('Success:', values, cart);
+
+        const arrDetail = cart.map((detail, index) => {
+            return {
+                "bookName": detail.detailBook.mainText,
+                "quantity": detail.quantity,
+                "_id": detail._id
+            }
+        })
+
+        const objOrder = {
+            name: values.fullName ? values.fullName : user?.fullName,
+            address: values?.address,
+            // phone: user?.phone ? user?.phone : values.phone,
+            phone: values.phone ? values.phone : user?.phone,
+            totalPrice: sumPrice,
+            detail: arrDetail
+        }
+        console.log('objOrder', objOrder)
+        setLoadingOder(true)
+
+        const rs = await postCreateAnOrder(objOrder)
+
+        setLoadingOder(false)
+
+        console.log('>> check rs order:', rs)
+        if (rs && rs.data) {
+            setStateOrder(true)
+            setCurrentStep(3)
+            dispatch(doOrderSuccessAction([]))
+            message.success("Đặt hàng thành công", [2]);
+        } else {
+            message.error('Đặt hàng thất bại', [2])
+            setCurrentStep(2)
+        }
     };
+
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
@@ -314,6 +346,7 @@ const IndexOrderBook = () => {
                                                 <Divider />
                                                 <Form.Item>
                                                     <Button
+                                                        loading={loadingOrder}
                                                         htmlType="submit"
                                                         style={{
                                                             width: "100%",
@@ -380,7 +413,7 @@ const IndexOrderBook = () => {
                             <Button type="primary" key="console">
                                 Xem lịch sử
                             </Button>,
-                            <Button key="buy">Buy Again</Button>,
+                            <Button onClick={() => navigate('/')} key="buy">Buy Again</Button>,
                         ]}
                     />
                 </div>

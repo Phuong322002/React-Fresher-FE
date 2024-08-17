@@ -32,7 +32,7 @@ const UserTableAdmin = () => {
     const [inforUser, setInforUser] = useState('')
 
     const hanldeDetailUser = (record) => {
-        console.log(record)
+        console.log('dd', record)
         showDrawer()
         if (record && record._id) {
             setInforUser(record)
@@ -249,10 +249,6 @@ const UserTableAdmin = () => {
         form.resetFields()
     };
 
-    // const [fullName, setFullName] = useState('');
-    // const [password, setPassword] = useState('');
-    // const [email, setEmail] = useState('');
-    // const [phone, setPhone] = useState('');
 
     const onFinish = async (values) => {
         console.log('Success:', values);

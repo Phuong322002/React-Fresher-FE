@@ -102,6 +102,40 @@ const getDataDetailBook = (_id) => {
     return instance.get(`/api/v1/book/${_id}`)
 }
 
+const postCreateAnOrder = (data) => {
+    return instance.post('/api/v1/order', {...data})
+}
+
+const getOrderHistory = () => {
+    return instance.get('/api/v1/history')
+}
+
+const postUploadImgAvatar = (fileImg) => {
+
+    const formDataAvatar = new FormData();
+    formDataAvatar.append('fileImg', fileImg);
+    return instance({
+        method: 'post',
+        url: '/api/v1/file/upload',
+        data: formDataAvatar,
+        headers: {
+            'Content-Type': `multipart/form-data`,
+            'upload-type': 'avatar'
+        },
+    })
+}
+
+const putUpdateUserInfo = (data) => {
+        
+    return instance.put('/api/v1/user', {...data})
+}   
+
+
+const postChangePasswork = (data) => {
+
+    return instance.post('/api/v1/user/change-password', {...data})
+}
+
 export {
     Register,
     Login,
@@ -118,5 +152,10 @@ export {
     postCreateABook,
     deleteABook,
     updateABook,
-    getDataDetailBook
+    getDataDetailBook,
+    postCreateAnOrder,
+    getOrderHistory,
+    postUploadImgAvatar,
+    putUpdateUserInfo,
+    postChangePasswork
 }

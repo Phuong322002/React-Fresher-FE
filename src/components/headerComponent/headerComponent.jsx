@@ -18,8 +18,9 @@ import { useNavigate } from "react-router-dom";
 import { doLogoutUser } from "../../redux/account/accountSlice";
 import { FcManager } from "react-icons/fc";
 import { Avatar } from "antd";
-import { UserOutlined } from '@ant-design/icons';
+import { HistoryOutlined, UserOutlined } from '@ant-design/icons';
 import { isArray } from "lodash";
+import ModalUploadUser from "./ModalUploadAccount";
 
 const HeaderComponent = () => {
     const [open, setOpen] = useState(false);
@@ -40,6 +41,8 @@ const HeaderComponent = () => {
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
 
     const user = useSelector(state => state.account.user)
+
+    console.log('user', user)
 
     const arrCart = useSelector(state => state?.order?.carts)
 
@@ -81,13 +84,18 @@ const HeaderComponent = () => {
 
     const items = [
         {
-            label: 'Quản Lý Tài Khoản',
+            label: <ModalUploadUser />,
             key: '1',
             icon: <MdManageAccounts style={{ fontSize: '18px' }} />,
         },
         {
-            label: <span onClick={() => { LogoutUser() }}>Đăng Xuất</span>,
+            label: <span onClick={() => navigate('history')}>Lịch sử mua hàng</span>,
             key: '2',
+            icon: <HistoryOutlined onClick={() => navigate('history')} style={{ fontSize: '18px' }} />,
+        },
+        {
+            label: <span onClick={() => { LogoutUser() }}>Đăng Xuất</span>,
+            key: '3',
             icon: <IoLogOutOutline onClick={() => { LogoutUser() }} style={{ fontSize: '18px' }} />,
         }
     ];
@@ -118,6 +126,8 @@ const HeaderComponent = () => {
 
 
     const imageBackendPng = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`
+
+    console.log('imageBackendPng', imageBackendPng)
 
     //Popover Cart
     const text = <span>Sản phẩm mới thêm</span>;
@@ -166,7 +176,7 @@ const HeaderComponent = () => {
 
                 <div className="input-header">
                     <Input
-                        size="large"
+                        size="larger"
                         placeholder="Bạn tìm gì hôm nay"
                         prefix={
                             <FcSearch style={{ fontSize: '25px' }} />
@@ -217,7 +227,7 @@ const HeaderComponent = () => {
                         :
                         <Space wrap>
                             <Dropdown.Button menu={menuProps} onClick={handleButtonClick}>
-                                <Avatar src={imageBackendPng} size={24} icon={<UserOutlined />} />
+                                <Avatar src={imageBackendPng} size={24} />
                                 {user.fullName}
                             </Dropdown.Button>
                         </Space>
