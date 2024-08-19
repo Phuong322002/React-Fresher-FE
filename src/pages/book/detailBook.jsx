@@ -10,7 +10,7 @@ import { BsCartPlus } from "react-icons/bs";
 import BookLoadingSkeleton from "./BookLoadingSkeleton";
 import { getDataDetailBook } from "../../services/axiosCreateAPI";
 import { doAddtoCartAction } from "../../redux/order/orderSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const DetailBookParams = (props) => {
 
@@ -21,6 +21,11 @@ const DetailBookParams = (props) => {
     const param = new URLSearchParams(location.search)
     const id = param?.get('id')
     console.log('Location, param:', location, param, id)
+
+    const user = useSelector(state => state.account.user)
+
+    console.log('user ordered', user)
+    const userId = user.id
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentIndexImg, setCurrentIndexImg] = useState(0)
@@ -156,10 +161,12 @@ const DetailBookParams = (props) => {
         console.log('quantity, detailBook', quantity, detailBook)
         dispatch(doAddtoCartAction(
             {
+                userId,
                 quantity,
                 _id: detailBook._id,
                 detailBook
-            }
+            },
+
         ))
         message.success('Sản phẩm đã được thêm vào giỏ hàng', [2])
     }

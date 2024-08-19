@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash'
 const initialState = {
+  userId:'',
   carts: []
 };
 
@@ -17,26 +18,41 @@ export const orderSlice = createSlice({
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
       const cart = action.payload
-        const index = state.carts.findIndex((book, index)=>{
-                return book._id === cart._id
-        })
-        if(index !== -1){
-            state.carts[index].quantity += cart.quantity
-            if(state.carts[index].quantity > state.carts[index].detailBook.quantity){
-              state.carts[index].quantity =  state.carts[index].detailBook.quantity
-            }
-        }else{
-          if(cart.quantity > cart.detailBook.quantity){
-            cart.quantity = cart.detailBook.quantity
-          }
-          state.carts.push(cart)
+      console.log('cart and id', cart)
+      // const indexUser = state.carts.findIndex((us)=> {
+      //     return us.userId === cart.userId
+      // })
 
+      // console.log('indexUser',indexUser)
+      
+      if(state.userId === cart.userId){
+          const arrNewCart = state.carts.filter((p)=> {
+                return p.userId === cart.userId
+          })
+          console.log('arrNewCart',arrNewCart)
+
+          const index = arrNewCart.findIndex((book, index)=>{
+            return book._id === cart._id
+    })
+    if(index !== -1){
+        state.carts[index].quantity += cart.quantity
+        if(state.carts[index].quantity > state.carts[index].detailBook.quantity){
+          state.carts[index].quantity =  state.carts[index].detailBook.quantity
         }
+    }else{
+      if(cart.quantity > cart.detailBook.quantity){
+        cart.quantity = cart.detailBook.quantity
+      }
+      state.carts.push(cart)
+    }
+      }
+
+        
       // if(!_.isEmpty(cart)){
       //   state.carts.push(cart)
       // }
+      state.userId = cart.userId
       console.log('>>> Check action: ', cart, state.carts)
-
     },
 
     doUpdatetoCartAction: (state, action) => {
@@ -75,12 +91,13 @@ export const orderSlice = createSlice({
       const cart = action.payload
 
       console.log('delete cart', cart)
+      state.carts = cart
       
-      const newArrCarts = state.carts.filter((c)=> {
-            return c._id !== cart
-      })
-      console.log('newArrCarts',newArrCarts)
-      state.carts = newArrCarts
+      // const newArrCarts = state.carts.filter((c)=> {
+      //       return c._id !== cart.idBook
+      // })
+      // console.log('newArrCarts',newArrCarts)
+      // state.carts = newArrCarts
     },
 
     doOrderSuccessAction: (state, action) => {
@@ -90,7 +107,20 @@ export const orderSlice = createSlice({
       // immutable state based off those changes
       const cart = action.payload
       console.log('cart',cart)
-      state.carts = cart
+      const result = state.carts.filter(itemA => {
+        return !cart.some(itemB => itemA.userId === itemB.userId);
+    });
+      state.carts = result
+    },
+
+    doGetUserIdAction: (state, action) => {
+      // Redux Toolkit allows us to write "mutating" logic in reducers. It
+      // doesn't actually mutate the state because it uses the Immer library,
+      // which detects changes to a "draft state" and produces a brand new
+      // immutable state based off those changes
+      const cart = action.payload
+      console.log('id of user',cart)
+      state.userId = cart.id
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -100,6 +130,6 @@ export const orderSlice = createSlice({
   },
 });
 
-export const {doAddtoCartAction, doUpdatetoCartAction, doDeletetoCartAction, doOrderSuccessAction} = orderSlice.actions;
+export const {doAddtoCartAction, doUpdatetoCartAction, doDeletetoCartAction, doOrderSuccessAction, doGetUserIdAction} = orderSlice.actions;
 
 export default orderSlice.reducer;

@@ -6,13 +6,13 @@ const CheckAdmin = (props) => {
     const user = useSelector(state => state.account.user)
     const isLoading = useSelector(state => state.account.isLoading)
 
-    const checkAd = user.role
+    const checkRole = user.role
     const routerAd = window.location.pathname.startsWith('/admin')
 
 
     return (
         <>
-            {routerAd && checkAd === 'ADMIN'
+            {routerAd && checkRole === 'ADMIN' || !routerAd && checkRole === 'USER' || checkRole === 'ADMIN'
                 ?
                 <>{props.children}</>
                 :

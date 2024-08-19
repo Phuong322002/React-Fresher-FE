@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -24,12 +24,14 @@ import { FcHome } from "react-icons/fc";
 import { LuLogOut } from "react-icons/lu";
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
+import PropTypes from 'prop-types';
 
 const { Header, Sider, Content } = Layout;
 
 const LayoutAdmin = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [collapsedMB, setCollapsedMB] = useState(true);
+    const [activeKey, setActiveKey] = useState('')
 
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
 
@@ -71,7 +73,7 @@ const LayoutAdmin = () => {
 
     const itemss = [
         {
-            key: '1',
+            key: '/admin',
             icon: <MdDashboard />,
             label: <NavLink to='/admin'>Dashboard</NavLink>
         },
@@ -80,28 +82,36 @@ const LayoutAdmin = () => {
             icon: <FaUserTie />,
             label: 'Manage Users',
             children: [
-
                 {
-                    key: '2a',
+                    key: '/admin/user',
                     icon: <FaUserGroup />,
                     label: <NavLink to='/admin/user'>CRUD</NavLink>,
                 }
             ]
         },
         {
-            key: '3',
+            key: '/admin/book',
             icon: <FaBookAtlas />,
-            label: <NavLink to='/admin/book'>Managee Books</NavLink>,
+            label: <NavLink to='/admin/book'>Manage Books</NavLink>,
         },
         {
-            key: '4',
+            key: '/admin/order',
             icon: <FaSackDollar />,
-            label: 'Managee Orders',
+            label: <NavLink to='/admin/order'>Manage Orders</NavLink>,
         },
     ]
 
     const imageBackendPng = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`
 
+
+    useEffect(() => {
+        setActiveKey(window.location.pathname)
+    }, [activeKey])
+
+    const handleClickMenu = (e) => {
+        console.log('e.key', e.key)
+        setActiveKey(e.key)
+    }
     return (
 
         <Layout className='main-admin' style={{ minHeight: "100vh" }}>
@@ -116,12 +126,14 @@ const LayoutAdmin = () => {
 
                 <Menu
                     mode="inline"
-                    defaultSelectedKeys={['1']}
+                    // defaultSelectedKeys={['/admin']}
+                    selectedKeys={activeKey}
                     items={itemss}
                     style={{
                         height: '100%',
                         borderRight: 0,
                     }}
+                    onClick={(e) => { handleClickMenu(e) }}
                 />
             </Sider>
 
@@ -134,7 +146,8 @@ const LayoutAdmin = () => {
 
                 <Menu
                     mode="inline"
-                    defaultSelectedKeys={['1']}
+                    // defaultSelectedKeys={activeKey}
+                    selectedKeys={activeKey}
                     items={itemss}
                     style={{
                         height: '100%',

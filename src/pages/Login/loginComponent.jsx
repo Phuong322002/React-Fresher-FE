@@ -6,7 +6,7 @@ import { Login } from '../../services/axiosCreateAPI';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux'
 import { doLoginAction } from '../../redux/account/accountSlice';
-
+import { doGetUserIdAction } from '../../redux/order/orderSlice';
 const LoginPage = () => {
 
     const dispatch = useDispatch()
@@ -22,6 +22,8 @@ const LoginPage = () => {
         console.log("rs loginn:", rs)
         setIsLogin(false)
         if (rs && rs.statusCode === 201) {
+            console.log('rs.data login', rs.data)
+            dispatch(doGetUserIdAction(rs.data.user))
             dispatch(doLoginAction(rs.data))
             localStorage.setItem('access_token', rs.data.access_token)
             message.success("Đăng nhập thành công", [2])

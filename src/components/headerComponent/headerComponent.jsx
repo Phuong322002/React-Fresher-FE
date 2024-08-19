@@ -14,7 +14,7 @@ import { IoLogOutOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { Logout } from "../../services/axiosCreateAPI";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { doLogoutUser } from "../../redux/account/accountSlice";
 import { FcManager } from "react-icons/fc";
 import { Avatar } from "antd";
@@ -22,10 +22,14 @@ import { HistoryOutlined, UserOutlined } from '@ant-design/icons';
 import { isArray } from "lodash";
 import ModalUploadUser from "./ModalUploadAccount";
 
-const HeaderComponent = () => {
+const HeaderComponent = (props) => {
+
+    const { searchName, setSearchName } = props
     const [open, setOpen] = useState(false);
     const [lengthCart, setLengthCart] = useState(0)
     const [arrBook, setArrBook] = useState([])
+    const [mainText, setMainText] = useState('')
+    // const [arrPro, setArrPro] = useState([])
 
     const showDrawer = () => {
         setOpen(true);
@@ -41,22 +45,45 @@ const HeaderComponent = () => {
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
 
     const user = useSelector(state => state.account.user)
+    const arrCart = useSelector(state => state?.order?.carts)
+    const userOrder = useSelector(state => state?.order?.userId)
 
+    console.log('userOrder', userOrder)
+    console.log('arrCart', arrCart)
     console.log('user', user)
 
-    const arrCart = useSelector(state => state?.order?.carts)
+    useEffect(() => {
+        let newCart = arrCart.filter((user) => {
+            return user.userId === userOrder
+        })
+        setLengthCart(newCart.length)
+        setArrBook(newCart)
+    }, [arrCart])
+
+    useEffect(() => {
+        if (arrCart && arrCart.length > 0) {
+            let newCart = arrCart.filter((user) => {
+                return user.userId === userOrder
+            })
+            console.log('newCart', newCart)
+            setLengthCart(newCart.length)
+            setArrBook(newCart)
+        }
+    }, [arrCart])
+
+
 
 
     // const length = arrCart?.length
 
     // console.log(">> check user:", user)
 
-    useEffect(() => {
-        if (isArray(arrCart)) {
-            setLengthCart(arrCart.length)
-            setArrBook(arrCart)
-        }
-    }, [arrCart])
+    // useEffect(() => {
+    //     if (isArray(arrCart)) {
+    //         setLengthCart(arrCart.length)
+    //         setArrBook(arrCart)
+    //     }
+    // }, [arrCart])
 
     console.log('lengthCart', lengthCart)
     console.log('arrCart', arrCart)
@@ -164,6 +191,14 @@ const HeaderComponent = () => {
     );
     const buttonWidth = 70;
 
+    const handleInputSearch = (e) => {
+        console.log('e.target.value', e.target.value)
+        setSearchName(e.target.value)
+    }
+
+    console.log('searchName', searchName)
+
+
     return (
         <>
             {/**/}
@@ -181,6 +216,8 @@ const HeaderComponent = () => {
                         prefix={
                             <FcSearch style={{ fontSize: '25px' }} />
                         }
+                        onChange={(e) => { handleInputSearch(e) }}
+                        value={searchName}
                     />
                 </div>
 

@@ -12,7 +12,7 @@ import HomePage from "./pages/Home/homePage";
 import Ex1 from "./pages/ex/ex1";
 import Ex2 from "./pages/ex/exx2";
 import RegisterComponent from "./pages/Resgister/register";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchAccount } from "./services/axiosCreateAPI";
 import { useDispatch } from "react-redux";
 import { doFetchUserAction } from "./redux/account/accountSlice";
@@ -28,8 +28,10 @@ import ManageBook from "./components/bookAdmin/bookComponent";
 import DetailBookParams from "./pages/book/detailBook";
 import IndexOrderBook from "./pages/Order/indexOrderBook";
 import OrderHistory from "./pages/Order/orderHistory";
+import OrderAdmin from "./components/orderAmin/orderAdmin";
 
 const Layout = () => {
+  const [searchName, setSearchName] = useState('');
   return (
     <div
       className="layout-main"
@@ -42,7 +44,7 @@ const Layout = () => {
 
       }}>
       <div className="header">
-        <HeaderComponent />
+        <HeaderComponent searchName={searchName} setSearchName={setSearchName} />
       </div>
 
       <div className="content"
@@ -52,7 +54,7 @@ const Layout = () => {
           height: 'fit-content',
         }}
       >
-        <Outlet />
+        <Outlet context={[searchName, setSearchName]} />
       </div>
 
       <div style={{
@@ -144,12 +146,15 @@ const App = () => {
           element: <DetailBookParams />
         },
         {
+
           path: 'order',
-          element: <IndexOrderBook />
+          element: <ProtectedRouter><IndexOrderBook /></ProtectedRouter>
         },
         {
           path: 'history',
-          element: <OrderHistory />
+          element: <ProtectedRouter>
+            <OrderHistory />
+          </ProtectedRouter>
         }
       ]
     },
@@ -174,6 +179,10 @@ const App = () => {
         {
           path: 'book',
           element: <ManageBook />
+        },
+        {
+          path: 'order',
+          element: <OrderAdmin />
         }
       ]
     },

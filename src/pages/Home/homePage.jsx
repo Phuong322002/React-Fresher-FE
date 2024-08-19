@@ -10,12 +10,12 @@ import { Pagination } from 'antd';
 import { getCategoryBook } from '../../services/axiosCreateAPI';
 import { getListBookWithPaginate } from '../../services/axiosCreateAPI';
 import PropagateLoader from "react-spinners/PropagateLoader";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 const HomePage = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate()
+    const [searchName, setSearchName] = useOutletContext();
 
     const [listCategory, setListCategory] = useState([])
     const [current, setCurrent] = useState(1);
@@ -28,6 +28,7 @@ const HomePage = () => {
     const [query, setQuery] = useState('')
     const [filterPrice, setFilterPrice] = useState('')
 
+    console.log('searchNameee', searchName)
     // Form
     const onFinish = (values) => {
         console.log('Success:', values);
@@ -98,6 +99,7 @@ const HomePage = () => {
         form.resetFields()
         setFilterCategory('')
         setFilterPrice('')
+        setSearchName('')
         // setQuery(`current=${current}&pageSize=${pageSize}&sort=-sold`)
 
     }
@@ -125,7 +127,7 @@ const HomePage = () => {
 
     useEffect(() => {
         fetchListBookPaginate()
-    }, [current, sort, filterCategory, query, filterPrice])
+    }, [current, sort, filterCategory, query, filterPrice, searchName])
 
     const fetchListBookPaginate = async () => {
         setLoading(true)
@@ -147,6 +149,10 @@ const HomePage = () => {
         if (sort !== '') {
             // query += sort
             setQuery((query) => query + sort)
+        }
+
+        if (searchName !== "") {
+            setQuery((query) => query + `&mainText=/${searchName}/i`)
         }
 
         const rs = await getListBookWithPaginate(query)

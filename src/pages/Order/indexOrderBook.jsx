@@ -28,6 +28,7 @@ const IndexOrderBook = () => {
     const [stateOrderSucc, setStateOrder] = useState(false)
     const [currentStep, setCurrentStep] = useState(1)
     const [loadingOrder, setLoadingOder] = useState(false)
+    const [arrBook, setArrBook] = useState([])
     const handleInputNumber = (value, book) => {
 
         console.log('changed', value, book);
@@ -43,8 +44,23 @@ const IndexOrderBook = () => {
 
     const cart = useSelector(state => state.order.carts)
 
+    console.log('cart order', cart)
+
     const user = useSelector(state => state.account.user)
-    console.log('user order', user)
+    console.log('user order', user.id)
+
+    const userIdOrder = useSelector(state => state.order.userId)
+
+    console.log('userIdOrder', userIdOrder)
+
+    useEffect(() => {
+        const arrNewOrder = cart.filter((idUser) => {
+            return idUser.userId === userIdOrder
+        })
+        console.log('arrNewOrder', arrNewOrder)
+        setArrBook(arrNewOrder)
+    }, [cart])
+
 
 
 
@@ -63,19 +79,55 @@ const IndexOrderBook = () => {
     }, [cart])
 
     console.log('sumPrice', sumPrice)
-    console.log('cart', cart)
+
+
+
+
+    const [test, setTest] = useState(cart)
+    const [iddele, setIddele] = useState('')
+
+    useEffect(() => {
+        const t = test.findIndex((c) => {
+            // console.log('c, idDelete', c._id, iddele)
+            if (c.userId === user.id) {
+                return c._id === iddele
+            }
+        })
+        console.log('test', test)
+        let a = []
+        if (test !== -1) {
+            a = test.filter((cr, index) => {
+                return index !== t
+            })
+        }
+        setTest(a)
+    }, [iddele])
+    console.log("check delete:", test)
+
+    useEffect(() => {
+        dispatch(doDeletetoCartAction(test))
+    }, [test])
+
 
 
     // dele book in cart
-    const handleDeleteBookInCart = (_id) => {
-        dispatch(doDeletetoCartAction(_id))
+    const handleDeleteBookInCart = (idDelete) => {
+        console.log('idDelete', idDelete)
+        console.log('cart order', cart)
+        setIddele(idDelete)
+        // console.log('_id', _id)
+        // const data = {
+        //     idBook: _id,
+        //     idUSer: user.id
+        // }
     }
+    // console.log('check test delete', test)
 
     //order
     const onFinish = async (values) => {
         console.log('Success:', values, cart);
 
-        const arrDetail = cart.map((detail, index) => {
+        const arrDetail = arrBook.map((detail, index) => {
             return {
                 "bookName": detail.detailBook.mainText,
                 "quantity": detail.quantity,
@@ -102,7 +154,7 @@ const IndexOrderBook = () => {
         if (rs && rs.data) {
             setStateOrder(true)
             setCurrentStep(3)
-            dispatch(doOrderSuccessAction([]))
+            dispatch(doOrderSuccessAction(arrBook))
             message.success("Đặt hàng thành công", [2]);
         } else {
             message.error('Đặt hàng thất bại', [2])
@@ -155,7 +207,7 @@ const IndexOrderBook = () => {
                         <Col md={18} sm={24} xs={24} >
                             <div className="main-left-order">
 
-                                {cart && cart.length > 0 && cart.map((book, index) => {
+                                {arrBook && arrBook.length > 0 && arrBook.map((book, index) => {
                                     console.log('book', book)
                                     return (
                                         <>
@@ -354,7 +406,7 @@ const IndexOrderBook = () => {
                                                             color: 'white'
                                                         }}
                                                     >
-                                                        Đặt hàng ({cart.length})
+                                                        Đặt hàng ({arrBook.length})
                                                     </Button>
                                                 </Form.Item>
                                             </Form>
@@ -388,7 +440,7 @@ const IndexOrderBook = () => {
                                                         color: 'white'
                                                     }}
                                                 >
-                                                    Mua hàng ({cart.length})
+                                                    Mua hàng ({arrBook.length})
                                                 </Button>
                                             </div>
                                         </>

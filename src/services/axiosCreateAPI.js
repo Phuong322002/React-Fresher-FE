@@ -136,6 +136,16 @@ const postChangePasswork = (data) => {
     return instance.post('/api/v1/user/change-password', {...data})
 }
 
+const getDashboard = () => {
+
+    return instance.get('/api/v1/database/dashboard')
+}
+
+const getGetListOrder = (query) => {
+    
+    return instance.get(`/api/v1/order?${query}`)
+}
+
 export {
     Register,
     Login,
@@ -157,5 +167,7 @@ export {
     getOrderHistory,
     postUploadImgAvatar,
     putUpdateUserInfo,
-    postChangePasswork
+    postChangePasswork,
+    getDashboard,
+    getGetListOrder
 }
