@@ -14,7 +14,7 @@
     "@ant-design/icons": "5.3.7",
     "@reduxjs/toolkit": "1.9.3",
     "antd": "5.19.2",
-    "axios": "1.7.2",
+    "axios": "^1.7.4",
     "bootstrap": "^5.3.3",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
