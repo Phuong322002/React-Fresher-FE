@@ -14,13 +14,14 @@ import { IoLogOutOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { Logout } from "../../services/axiosCreateAPI";
 import { useDispatch } from "react-redux";
-import { Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { doLogoutUser } from "../../redux/account/accountSlice";
 import { FcManager } from "react-icons/fc";
 import { Avatar } from "antd";
 import { HistoryOutlined, UserOutlined } from '@ant-design/icons';
 import { isArray } from "lodash";
 import ModalUploadUser from "./ModalUploadAccount";
+import ComponentAc from "./componentAc";
 
 const HeaderComponent = (props) => {
 
@@ -242,24 +243,7 @@ const HeaderComponent = (props) => {
                 <div className="cropdown-header">
                     {isAuthenticated === false ?
                         <>
-                            <div style={{ fontSize: '25px', color: "green" }}>
-                                <RiAccountCircleFill />
-                            </div>
-                            <span style={{ fontSize: '18px', marginTop: '2px' }}>
-                                Tài Khoản
-                                {/* <Dropdown
-                                    menu={{
-                                        items,
-                                    }}
-                                    trigger={['click']}
-                                >
-                                    <a onClick={(e) => e.preventDefault()}>
-                                        <Space>
-                                            
-                                        </Space>
-                                    </a>
-                                </Dropdown> */}
-                            </span>
+                            <ComponentAc />
                         </>
                         :
                         <Space wrap>

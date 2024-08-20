@@ -29,7 +29,6 @@ import DetailBookParams from "./pages/book/detailBook";
 import IndexOrderBook from "./pages/Order/indexOrderBook";
 import OrderHistory from "./pages/Order/orderHistory";
 import OrderAdmin from "./components/orderAmin/orderAdmin";
-
 const Layout = () => {
   const [searchName, setSearchName] = useState('');
   return (
